@@ -8,8 +8,11 @@ public class Board : ScriptableObject
     public int height;
     public int width;
 
-    public void Initialize()
+    public void Initialize(int height, int width)
     {
-        
+        this.height = height;
+        this.width = width;
     }
+
+    
 }

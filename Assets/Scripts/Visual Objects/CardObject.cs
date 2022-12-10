@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 public class CardObject : MonoBehaviour
 {
     [Header("Components")]
@@ -11,9 +13,12 @@ public class CardObject : MonoBehaviour
     [SerializeField] private float pickUpHeight = 0.5f;
     [SerializeField] private LayerMask layerMask;
 
+    [Header("Debugging")]
+    [SerializeField] private bool debugMode;
+
     private void OnMouseDown()
     {
-
+        
     }
 
     private void OnMouseDrag()
@@ -47,13 +52,14 @@ public class CardObject : MonoBehaviour
         // Raycast down from the mouse
         Vector3 worldPos = transform.position;
         RaycastHit hitInfo;
-        
+
         var hit = Physics.Raycast(worldPos, Vector3.down, out hitInfo, 10f, layerMask);
 
         // Check to see if you hit a grid
         if (hit)
         {
-            if (hitInfo.transform.TryGetComponent(out BoardObject boardObject)) {
+            if (hitInfo.transform.TryGetComponent(out BoardObject boardObject))
+            {
                 // Debug
                 //print(worldPos);
 
@@ -63,15 +69,19 @@ public class CardObject : MonoBehaviour
                 // Set new position
                 transform.position = boardPosition;
 
-            }
                 
+
+            }
+
 
         }
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
-        // print("Drawing gizmos");
+        // Make sure you are in debug mode
+        if (!debugMode) return;
+
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, Vector3.down * 10f);
     }
