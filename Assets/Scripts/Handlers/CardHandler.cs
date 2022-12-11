@@ -7,6 +7,7 @@ public class CardHandler : MonoBehaviour
     [Header("Components")]
     [SerializeField] private Transform tokenInputTransform;
     [SerializeField] private Transform tokenOutputTransform;
+    [SerializeField] private CardSlotHandler cardSlotHandler;
 
     [Header("Data")]
     [SerializeField] private Card card;
@@ -30,10 +31,11 @@ public class CardHandler : MonoBehaviour
         BoardEvents.instance.onMoveCard -= MoveCard;
     }
 
-    public void Initialize(Card card, Vector3 position)
+    public void Initialize(Card card, Vector3 position, CardSlotHandler cardSlotHandler)
     {
         this.card = card;
         transform.position = position;
+        this.cardSlotHandler = cardSlotHandler;
     }
 
     private void OnMouseDown()
@@ -43,6 +45,7 @@ public class CardHandler : MonoBehaviour
 
     private void OnMouseDrag()
     {
+        // Follow the mouse while slighly hovering over the board
         FollowMouse();
     }
 
@@ -75,13 +78,16 @@ public class CardHandler : MonoBehaviour
 
         var hit = Physics.Raycast(worldPosition, Vector3.down, out hitInfo, 10f, layerMask);
 
-        // Check to see if you hit a grid
+        // Check to see if you hit a card slot
         if (hit)
         {
-            if (hitInfo.transform.TryGetComponent(out BoardHandler boardHandler))
+            if (hitInfo.transform.TryGetComponent(out CardSlotHandler cardSlotHandler))
             {
+                // Debug
+                print(cardSlotHandler.ToString());
+
                 // Get the closest nearby slot position
-                var newPosition = boardHandler.GetNearestSlot(worldPosition);
+                var newPosition = cardSlotHandler.GetCardSlot().position;
 
                 // Move this card
                 card.cardSlot.board.MoveCard(card, card.cardSlot.position, newPosition);
@@ -98,7 +104,14 @@ public class CardHandler : MonoBehaviour
 
     public void MoveCard(Card card, Vector2Int oldPosition, Vector2Int newPosition)
     {
-        // TODO?
+        if (this.card == card)
+        {
+            // Get world position
+            var worldPosition = cardSlotHandler.boardHandler.GetWorldFromCell(newPosition);
+
+            // Set new position
+            transform.position = worldPosition;
+        }
     }
 
     public Vector3 GetTokenInputPosition()

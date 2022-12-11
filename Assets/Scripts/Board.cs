@@ -14,7 +14,7 @@ public class Board : ScriptableObject
     {
         this.width = width;
         this.height = height;
-        cardSlots = new CardSlot[height, width];
+        cardSlots = new CardSlot[width, height];
 
         // Create card slot array
         for (int i = 0; i < cardSlots.GetLength(0); i++)
@@ -97,8 +97,6 @@ public class Board : ScriptableObject
             // Finish
             return;
         }
-
-        Debug.Log(oldPosition);
 
         // Set old slot to empty
         oldSlot.SetCard(null);

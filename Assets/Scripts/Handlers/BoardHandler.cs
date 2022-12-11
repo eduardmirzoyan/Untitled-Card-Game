@@ -9,7 +9,9 @@ public class BoardHandler : MonoBehaviour
     [SerializeField] private Grid grid;
     [SerializeField] private Transform boardTransform;
     [SerializeField] private Transform storageTransform;
+    [SerializeField] private Transform cardSlotsTransform;
     [SerializeField] private GameObject cardPrefab;
+    [SerializeField] private GameObject cardSlotPrefab;
 
     [Header("Settings")]
     [SerializeField] private float tableThickness = 0.25f;
@@ -22,11 +24,12 @@ public class BoardHandler : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
 
+    private Vector3 tableOffset;
+
     private void Start()
     {
         // Sub to events
         BoardEvents.instance.onInitialize += Initialize;
-        BoardEvents.instance.onCreateCard += CreateCard;
         BoardEvents.instance.onMoveCard += MoveCard;
     }
 
@@ -34,7 +37,6 @@ public class BoardHandler : MonoBehaviour
     {
         // Unsub
         BoardEvents.instance.onInitialize -= Initialize;
-        BoardEvents.instance.onCreateCard -= CreateCard;
         BoardEvents.instance.onMoveCard -= MoveCard;
     }
 
@@ -56,7 +58,10 @@ public class BoardHandler : MonoBehaviour
         // Set size
         boardTransform.localScale = tableSize;
         // Set position
-        boardTransform.position = Vector3.zero;
+        boardTransform.position = Vector3.zero; // new Vector3(tableSize.x / 2, 0, tableSize.z / 2);
+
+        // Set offset to be used in other calculations
+        tableOffset = new Vector3(tableSize.x / 2, 0, tableSize.z / 2);
 
         // Make storage at the top of table with height of 1 card
         var storageSize = new Vector3(gapSize.x + (gapSize.x + cardSize.x) * board.width, tableThickness, gapSize.y + (gapSize.y + cardSize.y) * 1);
@@ -64,23 +69,39 @@ public class BoardHandler : MonoBehaviour
         storageTransform.localScale = storageSize;
         // Set position
         storageTransform.position = new Vector3(0, 0, storageSize.z / 2 + tableSize.z / 2);
+
+        // Create card slots
+        foreach (var cardSlot in board.cardSlots)
+        {
+            // Create the slot object
+            CreateCardSlot(cardSlot);
+        }
     }
 
-    public void CreateCard(Card card, Vector2Int position)
+    private void CreateCardSlot(CardSlot cardSlot)
     {
-        // Get the card's world position
-        var cellPosition = new Vector3Int(position.x, position.y, 0);
-        var cellGapOffset = new Vector3(grid.cellGap.x / 2, 0, grid.cellGap.y / 2);
-        var worldPosition = grid.GetCellCenterWorld(cellPosition) - cellGapOffset;
+        // Get the world position
+        var worldPosition = GetWorldFromCell(cardSlot.position);
 
-        // Create the card object
-        var cardHandler = Instantiate(cardPrefab).GetComponent<CardHandler>();
-        cardHandler.Initialize(card, worldPosition);
+        // Create slot object as child
+        var cardSlotHandler = Instantiate(cardSlotPrefab, cardSlotsTransform).GetComponent<CardSlotHandler>();
+        cardSlotHandler.Initialize(cardSlot, worldPosition, this);
     }
+
+    // public void CreateCard(Card card, Vector2Int position)
+    // {
+    //     // Get the card's world position
+    //     var worldPosition = GetWorldFromCell(position);
+
+    //     // Create the card object
+    //     var cardHandler = Instantiate(cardPrefab).GetComponent<CardHandler>();
+    //     cardHandler.Initialize(card, worldPosition);
+    // }
 
     public void MoveCard(Card card, Vector2Int oldPosition, Vector2Int newPosition)
     {
         // TODO ?
+        
     }
 
     public Vector3 GetNearestGridPosition(Vector3 position)
@@ -107,5 +128,25 @@ public class BoardHandler : MonoBehaviour
     {
         var cellPositon = grid.WorldToCell(position);
         return (Vector2Int)cellPositon;
+    }
+
+    public Vector3 GetWorldFromCell(Vector2Int position)
+    {
+        // This method uses the grid
+        // var cellPosition = new Vector3Int(position.x, position.y, 0);
+        // var cellGapOffset = new Vector3(grid.cellGap.x / 2, 0, grid.cellGap.y / 2);
+        // var worldPosition = grid.GetCellCenterWorld(cellPosition) - cellGapOffset;
+
+        var xOffset = gapSize.x * (position.x + 1);
+        var yOffset = gapSize.y * (position.y + 1);
+
+        // Manually get position
+        float xPos = xOffset + cardSize.x / 2 + position.x * cardSize.x;
+        float yPos = yOffset + cardSize.y / 2 + position.y * cardSize.y;
+
+        // Get world position incorperating offset
+        var worldPosition = new Vector3(xPos, 0, yPos) - tableOffset;
+
+        return worldPosition;
     }
 }

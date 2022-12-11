@@ -25,8 +25,8 @@ public class GameHandler : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                // Get a random card
-                var randomCard = debugCards[Random.Range(0, debugCards.Count)];
+                // Get a copy of a random card
+                var randomCard = Instantiate(debugCards[Random.Range(0, debugCards.Count)]);
 
                 // Create the card on the board
                 game.board.CreateCard(randomCard);
