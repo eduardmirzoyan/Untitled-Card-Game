@@ -21,9 +21,24 @@ public class Card : ScriptableObject
     public string effectDescription;
     public Sprite sprite;
 
-    public void Initialize()
-    {
+    [Header("Tokens")]
+    public TokenStack inputStack;
+    public TokenStack outputStack;
 
+    [Header("Parent")]
+    public CardSlot cardSlot;
+
+    public void Initialize(CardSlot cardSlot = null)
+    {
+        this.cardSlot = cardSlot;
+        
+        inputStack = ScriptableObject.CreateInstance<TokenStack>();
+        outputStack = ScriptableObject.CreateInstance<TokenStack>();
+    }
+
+    public void AddTokenToInput(ResourceToken token)
+    {
+        // TODO
     }
 
     public bool SatisfiesCost()

@@ -2,12 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-public class CardObject : MonoBehaviour
+public class TokenHandler : MonoBehaviour
 {
-    [Header("Components")]
-    // TODO
+    [Header("Data")]
+    [SerializeField] private ResourceToken token;
 
     [Header("Settings")]
     [SerializeField] private float pickUpHeight = 0.5f;
@@ -18,7 +16,7 @@ public class CardObject : MonoBehaviour
 
     private void OnMouseDown()
     {
-        
+
     }
 
     private void OnMouseDrag()
@@ -28,8 +26,9 @@ public class CardObject : MonoBehaviour
 
     private void OnMouseUp()
     {
-        // The card is dropped and should snap to a grid
-        SnapToGrid();
+        
+        // Token should check to see if there is a stack it can add itself to
+        AddToStack();
     }
 
     private void FollowMouse()
@@ -47,7 +46,7 @@ public class CardObject : MonoBehaviour
         }
     }
 
-    private void SnapToGrid()
+    private void AddToStack()
     {
         // Raycast down from the mouse
         Vector3 worldPos = transform.position;
@@ -55,28 +54,26 @@ public class CardObject : MonoBehaviour
 
         var hit = Physics.Raycast(worldPos, Vector3.down, out hitInfo, 10f, layerMask);
 
-        // Check to see if you hit a grid
+        // Check to see if you hit something
         if (hit)
         {
-            if (hitInfo.transform.TryGetComponent(out BoardObject boardObject))
+            // Check to see if you hit a card
+            if (hitInfo.transform.TryGetComponent(out CardHandler cardObject))
             {
                 // Debug
-                //print(worldPos);
+                if (debugMode) print("Added " + name + " To " + cardObject.name + " stack.");
 
                 // Find the nearest slot to snap to
-                var boardPosition = boardObject.GetNearestGridPosition(worldPos);
+                var newPosition = cardObject.GetTokenInputPosition();
 
                 // Set new position
-                transform.position = boardPosition;
-
-                
-
+                transform.position = newPosition;
             }
-
 
         }
     }
 
+    
     private void OnDrawGizmosSelected()
     {
         // Make sure you are in debug mode
