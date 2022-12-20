@@ -5,7 +5,6 @@ using UnityEngine;
 public class CardSlotHandler : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] public BoardHandler boardHandler;
     [SerializeField] private GameObject cardPrefab;
 
     [Header("Data")]
@@ -21,26 +20,28 @@ public class CardSlotHandler : MonoBehaviour
     {
         // Unsub
         BoardEvents.instance.onCreateCard -= CreateCard;
+        
     }
 
-    public void Initialize(CardSlot cardSlot, Vector3 position, BoardHandler boardHandler)
+    public void Initialize(CardSlot cardSlot, Vector3 position)
     {
         this.cardSlot = cardSlot;
         transform.position = position;
-        this.boardHandler = boardHandler;
     }
 
-    public void CreateCard(Card card, Vector2Int position)
+    private void CreateCard(Card card, Vector2Int position)
     {
         if (cardSlot.position != position) return;
 
         // Get the card's world position
-        var worldPosition = boardHandler.GetWorldFromCell(position);
+        var worldPosition = BoardHandler.instance.GetWorldFromCell(position);
 
         // Create the card object
         var cardHandler = Instantiate(cardPrefab).GetComponent<CardHandler>();
-        cardHandler.Initialize(card, worldPosition, this);
+        cardHandler.Initialize(card, worldPosition);
     }
+
+    
 
     public CardSlot GetCardSlot()
     {

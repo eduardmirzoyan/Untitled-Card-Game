@@ -14,6 +14,7 @@ public class GameHandler : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
     [SerializeField] private List<Card> debugCards;
+    [SerializeField] private List<ResourceToken> debugTokens;
 
     private void Start()
     {
@@ -30,6 +31,14 @@ public class GameHandler : MonoBehaviour
 
                 // Create the card on the board
                 game.board.CreateCard(randomCard);
+            }
+            else if (Input.GetKeyDown(KeyCode.M))
+            {
+                // Get a copy of a random token
+                var randomToken = Instantiate(debugTokens[Random.Range(0, debugTokens.Count)]);
+
+                // Create the token on the board
+                game.board.CreateToken(randomToken);
             }
         }
     }

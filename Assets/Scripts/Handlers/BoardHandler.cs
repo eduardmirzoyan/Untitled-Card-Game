@@ -26,18 +26,32 @@ public class BoardHandler : MonoBehaviour
 
     private Vector3 tableOffset;
 
+
+    public static BoardHandler instance;
+    private void Awake()
+    {
+        // Singleton Logic
+        if (BoardHandler.instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+    }
+
+
+
     private void Start()
     {
         // Sub to events
         BoardEvents.instance.onInitialize += Initialize;
-        BoardEvents.instance.onMoveCard += MoveCard;
     }
 
     private void OnDestroy()
     {
         // Unsub
         BoardEvents.instance.onInitialize -= Initialize;
-        BoardEvents.instance.onMoveCard -= MoveCard;
     }
 
     private void Update()
@@ -85,7 +99,7 @@ public class BoardHandler : MonoBehaviour
 
         // Create slot object as child
         var cardSlotHandler = Instantiate(cardSlotPrefab, cardSlotsTransform).GetComponent<CardSlotHandler>();
-        cardSlotHandler.Initialize(cardSlot, worldPosition, this);
+        cardSlotHandler.Initialize(cardSlot, worldPosition);
     }
 
     // public void CreateCard(Card card, Vector2Int position)
@@ -97,12 +111,6 @@ public class BoardHandler : MonoBehaviour
     //     var cardHandler = Instantiate(cardPrefab).GetComponent<CardHandler>();
     //     cardHandler.Initialize(card, worldPosition);
     // }
-
-    public void MoveCard(Card card, Vector2Int oldPosition, Vector2Int newPosition)
-    {
-        // TODO ?
-        
-    }
 
     public Vector3 GetNearestGridPosition(Vector3 position)
     {

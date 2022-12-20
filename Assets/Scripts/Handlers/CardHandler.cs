@@ -7,7 +7,8 @@ public class CardHandler : MonoBehaviour
     [Header("Components")]
     [SerializeField] private Transform tokenInputTransform;
     [SerializeField] private Transform tokenOutputTransform;
-    [SerializeField] private CardSlotHandler cardSlotHandler;
+    [SerializeField] private Vector3 homePosition;
+    [SerializeField] private GameObject tokenPrefab;
 
     [Header("Data")]
     [SerializeField] private Card card;
@@ -21,21 +22,27 @@ public class CardHandler : MonoBehaviour
 
     private void Start()
     {
+        // Set home to where it was spawned
+        homePosition = transform.position;
+
         // Sub
         BoardEvents.instance.onMoveCard += MoveCard;
+        CardEvents.instance.onDestroy += DestroyCard;
+        TokenEvents.instance.onCreate += CreateToken;
     }
 
     private void OnDestroy()
     {
         // Unsub
         BoardEvents.instance.onMoveCard -= MoveCard;
+        CardEvents.instance.onDestroy -= DestroyCard;
+        TokenEvents.instance.onCreate -= CreateToken;
     }
 
-    public void Initialize(Card card, Vector3 position, CardSlotHandler cardSlotHandler)
+    public void Initialize(Card card, Vector3 position)
     {
         this.card = card;
         transform.position = position;
-        this.cardSlotHandler = cardSlotHandler;
     }
 
     private void OnMouseDown()
@@ -53,6 +60,9 @@ public class CardHandler : MonoBehaviour
     {
         // Move to the new position you are hovering
         MoveCard();
+
+        // Return card to home position
+        transform.position = homePosition;
     }
 
     private void FollowMouse()
@@ -81,7 +91,7 @@ public class CardHandler : MonoBehaviour
         // Check to see if you hit a card slot
         if (hit)
         {
-            if (hitInfo.transform.TryGetComponent(out CardSlotHandler cardSlotHandler))
+            if (hitInfo.transform.parent.TryGetComponent(out CardSlotHandler cardSlotHandler))
             {
                 // Debug
                 print(cardSlotHandler.ToString());
@@ -106,12 +116,34 @@ public class CardHandler : MonoBehaviour
     {
         if (this.card == card)
         {
-            // Get world position
-            var worldPosition = cardSlotHandler.boardHandler.GetWorldFromCell(newPosition);
+            // Get world position from board
+            var worldPosition = BoardHandler.instance.GetWorldFromCell(newPosition);
 
-            // Set new position
-            transform.position = worldPosition;
+            // Set new home
+            homePosition = worldPosition;
         }
+    }
+
+    private void CreateToken(ResourceToken token, Card card)
+    {
+        if (this.card != card) return;
+
+        // Create the token object as a child
+        var tokenHandler = Instantiate(tokenPrefab, tokenInputTransform).GetComponent<TokenHandler>();
+        tokenHandler.Initialize(token);
+    }
+
+    private void DestroyCard(Card card)
+    {
+        if (this.card != card) return;
+
+        // Destroy self
+        Destroy(gameObject);
+    }
+
+    public Card GetCard()
+    {
+        return card;
     }
 
     public Vector3 GetTokenInputPosition()

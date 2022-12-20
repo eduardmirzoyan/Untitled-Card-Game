@@ -32,13 +32,18 @@ public class Card : ScriptableObject
     {
         this.cardSlot = cardSlot;
         
+        // Initalize stacks
         inputStack = ScriptableObject.CreateInstance<TokenStack>();
+        inputStack.Initialize();
+
         outputStack = ScriptableObject.CreateInstance<TokenStack>();
+        outputStack.Initialize();
     }
 
     public void AddTokenToInput(ResourceToken token)
     {
-        // TODO
+        // Add token to stack
+        inputStack.PushToken(token);
     }
 
     public bool SatisfiesCost()
@@ -49,8 +54,13 @@ public class Card : ScriptableObject
 
     public virtual void ActivateEffect()
     {
+        // Clear input tokens
+        inputStack.ClearStack();
+
         // Perform the actual effect here
         // TODO
+
+        // Create output
 
         // Check if you have any uses left
         if (usesLeft > 0)

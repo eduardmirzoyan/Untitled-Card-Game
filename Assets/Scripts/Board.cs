@@ -55,6 +55,9 @@ public class Board : ScriptableObject
                 break;
             }
         }
+
+        // Else the board is full and a card cannot be made
+        Debug.Log("Board is full, card cannot be created.");
     }
 
     public void CreateCard(Card card, Vector2Int position)
@@ -78,8 +81,40 @@ public class Board : ScriptableObject
         // Give the card to the cardslot
         cardSlot.SetCard(card);
 
+        // Initalize the card
+        card.Initialize(cardSlot);
+
         // Trigger event
         BoardEvents.instance.TriggerOnCreateCard(card, position);
+    }
+
+    public void CreateToken(ResourceToken token)
+    {
+        // Find the first open position
+        foreach (var cardslot in cardSlots)
+        {
+            // Check to see if slot is has a card
+            if (cardslot.IsOccupied())
+            {
+                // Create a token on the card
+                CreateToken(token, cardslot.card);
+
+                // Finish
+                break;
+            }
+        }
+
+        // Else the board does not have cards to create tokens on
+        Debug.Log("Board is does not have any cards that can hold tokens.");
+    }
+
+    public void CreateToken(ResourceToken token, Card card)
+    {
+        // Add to card's input stack
+        card.AddTokenToInput(token);
+
+        // Trigger event
+        TokenEvents.instance.TriggerOnCreate(token, card);
     }
 
     public void MoveCard(Card card, Vector2Int oldPosition, Vector2Int newPosition)
@@ -128,11 +163,11 @@ public class Board : ScriptableObject
     {
         string output = "";
 
-        for (int i = 0; i < cardSlots.GetLength(0); i++)
+        for (int i = 0; i < cardSlots.GetLength(1); i++)
         {
-            for (int j = 0; j < cardSlots.GetLength(1); j++)
+            for (int j = 0; j < cardSlots.GetLength(0); j++)
             {
-                if (cardSlots[i, j].IsOccupied())
+                if (cardSlots[j, i].IsOccupied())
                     output += "[x]";
                 else
                     output += "[  ]";

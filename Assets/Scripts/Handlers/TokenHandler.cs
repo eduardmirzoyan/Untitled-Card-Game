@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class TokenHandler : MonoBehaviour
 {
+    [Header("Components")]
+    [SerializeField] private Vector3 homePosition;
+
     [Header("Data")]
     [SerializeField] private ResourceToken token;
 
@@ -13,6 +16,26 @@ public class TokenHandler : MonoBehaviour
 
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
+
+    private void Start()
+    {
+        // Set home to where it was spawned
+        homePosition = transform.position;
+
+        // Sub
+        TokenEvents.instance.onDestroy += DestroyToken;
+    }
+
+    private void OnDestroy()
+    {
+        // Unsub
+        TokenEvents.instance.onDestroy -= DestroyToken;
+    }
+
+    public void Initialize(ResourceToken token)
+    {
+        this.token = token;
+    }
 
     private void OnMouseDown()
     {
@@ -29,6 +52,9 @@ public class TokenHandler : MonoBehaviour
         
         // Token should check to see if there is a stack it can add itself to
         AddToStack();
+
+        // Return card to home position
+        transform.position = homePosition;
     }
 
     private void FollowMouse()
@@ -39,8 +65,7 @@ public class TokenHandler : MonoBehaviour
         // Create a ray from mouse position
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        float distance; // the distance from the ray origin to the ray intersection of the plane
-        if (plane.Raycast(ray, out distance))
+        if (plane.Raycast(ray, out float distance)) // the distance from the ray origin to the ray intersection of the plane
         {
             transform.position = ray.GetPoint(distance); // distance along the ray
         }
@@ -49,10 +74,10 @@ public class TokenHandler : MonoBehaviour
     private void AddToStack()
     {
         // Raycast down from the mouse
-        Vector3 worldPos = transform.position;
-        RaycastHit hitInfo;
+        Vector3 worldPosition = transform.position;
 
-        var hit = Physics.Raycast(worldPos, Vector3.down, out hitInfo, 10f, layerMask);
+        // Make a raycast from the token position
+        var hit = Physics.Raycast(worldPosition, Vector3.down, out RaycastHit hitInfo, 10f, layerMask);
 
         // Check to see if you hit something
         if (hit)
@@ -63,6 +88,9 @@ public class TokenHandler : MonoBehaviour
                 // Debug
                 if (debugMode) print("Added " + name + " To " + cardObject.name + " stack.");
 
+                // Add token to stack
+                
+
                 // Find the nearest slot to snap to
                 var newPosition = cardObject.GetTokenInputPosition();
 
@@ -71,6 +99,14 @@ public class TokenHandler : MonoBehaviour
             }
 
         }
+    }
+
+    private void DestroyToken(ResourceToken token)
+    {
+        if (this.token != token) return;
+
+        // Destroy self
+        Destroy(gameObject);
     }
 
     
