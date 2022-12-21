@@ -102,13 +102,10 @@ public class CardHandler : MonoBehaviour
                 // Move this card
                 card.cardSlot.board.MoveCard(card, card.cardSlot.position, newPosition);
 
-                // Find the nearest slot to snap to
-                // var boardPosition = boardHandler.GetNearestGridPosition(worldPosition);
-
-                // Set new position
-                // transform.position = boardPosition;
+                // Move card to new stack
+                // var slot = cardSlotHandler.GetCardSlot();
+                // card.MoveTo(slot);
             }
-
         }
     }
 

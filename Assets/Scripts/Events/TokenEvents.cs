@@ -19,7 +19,7 @@ public class TokenEvents : MonoBehaviour
     }
 
     public event Action<ResourceToken, Card> onCreate;
-    public event Action<ResourceToken> onMove;
+    public event Action<ResourceToken, TokenStack, TokenStack> onMove;
     public event Action<ResourceToken> onDestroy;
 
     public void TriggerOnCreate(ResourceToken token, Card card)
@@ -30,11 +30,11 @@ public class TokenEvents : MonoBehaviour
         }
     }
 
-    public void TriggerOnMove(ResourceToken token)
+    public void TriggerOnMove(ResourceToken token, TokenStack fromStack, TokenStack toStack)
     {
         if (onMove != null)
         {
-            onMove(token);
+            onMove(token, fromStack, toStack);
         }
     }
 

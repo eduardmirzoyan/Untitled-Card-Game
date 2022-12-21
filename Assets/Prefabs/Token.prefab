@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 19566317043423214}
   - component: {fileID: 19566317043423215}
   - component: {fileID: 19566317043423201}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 19566318085068042}
   - component: {fileID: 19566318085068045}
   - component: {fileID: 19566318085068044}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Token
   m_TagString: Untagged
   m_Icon: {fileID: 0}

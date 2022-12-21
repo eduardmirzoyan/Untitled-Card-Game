@@ -19,7 +19,7 @@ public class CardEvents : MonoBehaviour
     }
 
     public event Action<Card> onCreate;
-    public event Action<Card> onMove;
+    public event Action<Card, CardSlot, CardSlot> onMove;
     public event Action<Card> onDestroy;
 
     public void TriggerOnCreate(Card card)
@@ -30,11 +30,11 @@ public class CardEvents : MonoBehaviour
         }
     }
 
-    public void TriggerOnMove(Card card)
+    public void TriggerOnMove(Card card, CardSlot fromSlot, CardSlot toSlot)
     {
         if (onMove != null)
         {
-            onMove(card);
+            onMove(card, fromSlot, toSlot);
         }
     }
 

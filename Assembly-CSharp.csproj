@@ -53,6 +53,10 @@
      <Compile Include="Assets\Scripts\CardSlot.cs" />
      <Compile Include="Assets\Scripts\Game.cs" />
      <Compile Include="Assets\Scripts\Events\TokenEvents.cs" />
+     <Compile Include="Assets\Scripts\SideBoard.cs" />
+     <Compile Include="Assets\Scripts\Handlers\SideBoardHandler.cs" />
+     <Compile Include="Assets\Scripts\Handlers\FixedSize.cs" />
+     <Compile Include="Assets\Scripts\Handlers\StackHandler.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.1f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

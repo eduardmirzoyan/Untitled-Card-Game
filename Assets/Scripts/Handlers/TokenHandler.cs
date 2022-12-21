@@ -39,7 +39,7 @@ public class TokenHandler : MonoBehaviour
 
     private void OnMouseDown()
     {
-
+        // TODO?
     }
 
     private void OnMouseDrag()
@@ -75,29 +75,22 @@ public class TokenHandler : MonoBehaviour
     {
         // Raycast down from the mouse
         Vector3 worldPosition = transform.position;
+        RaycastHit hitInfo;
 
-        // Make a raycast from the token position
-        var hit = Physics.Raycast(worldPosition, Vector3.down, out RaycastHit hitInfo, 10f, layerMask);
+        var hit = Physics.Raycast(worldPosition, Vector3.down, out hitInfo, 10f, layerMask);
 
-        // Check to see if you hit something
+        // Check to see if you hit a card slot
         if (hit)
         {
-            // Check to see if you hit a card
-            if (hitInfo.transform.TryGetComponent(out CardHandler cardObject))
+            if (hitInfo.transform.parent.TryGetComponent(out StackHandler stackHandler))
             {
                 // Debug
-                if (debugMode) print("Added " + name + " To " + cardObject.name + " stack.");
+                print(stackHandler.ToString());
 
-                // Add token to stack
-                
-
-                // Find the nearest slot to snap to
-                var newPosition = cardObject.GetTokenInputPosition();
-
-                // Set new position
-                transform.position = newPosition;
+                // Move token to new stack
+                var stack = stackHandler.GetTokenStack();
+                token.MoveTo(stack);
             }
-
         }
     }
 

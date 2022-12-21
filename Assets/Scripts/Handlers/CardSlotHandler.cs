@@ -40,9 +40,7 @@ public class CardSlotHandler : MonoBehaviour
         var cardHandler = Instantiate(cardPrefab).GetComponent<CardHandler>();
         cardHandler.Initialize(card, worldPosition);
     }
-
     
-
     public CardSlot GetCardSlot()
     {
         return cardSlot;

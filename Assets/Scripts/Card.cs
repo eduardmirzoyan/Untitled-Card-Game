@@ -40,6 +40,27 @@ public class Card : ScriptableObject
         outputStack.Initialize();
     }
 
+    public void MoveTo(CardSlot newSlot)
+    {
+        var oldSlot = this.cardSlot;
+
+        // Check if previous slot exists
+        if (oldSlot != null)
+        {
+            // Make empty
+            oldSlot.SetCard(null);
+        }
+
+        // Set new slot
+        newSlot.SetCard(this);
+        
+        // Update card slot
+        this.cardSlot = newSlot;
+
+        // Trigger event
+        CardEvents.instance.TriggerOnMove(this, oldSlot, newSlot);
+    }
+
     public void AddTokenToInput(ResourceToken token)
     {
         // Add token to stack

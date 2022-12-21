@@ -8,17 +8,38 @@ public enum TokenType { Food, Faith, Gold, Manpower };
 public class ResourceToken : ScriptableObject
 {
     public TokenType tokenType;
-    public Board board;
+    public TokenStack stack;
 
-    public void Initialize(TokenType tokenType, Board board)
+    public void Initialize(TokenType tokenType, TokenStack stack)
     {
         this.tokenType = tokenType;
-        this.board = board;
+        this.stack = stack;
+    }
+
+    public void MoveTo(TokenStack newStack)
+    {
+        var oldStack = this.stack;
+
+        // Check if previous stack exists
+        if (oldStack != null)
+        {
+            // Remove old token
+            oldStack.PopToken();
+        }
+
+        // Add new token
+        newStack.PushToken(this);
+
+        // Update card slot
+        this.stack = newStack;
+
+        // Trigger event
+        TokenEvents.instance.TriggerOnMove(this, oldStack, newStack);
     }
 
     public void Destroy()
     {
-        this.board = null;
+        this.stack = null;
 
         // Trigger event
         TokenEvents.instance.TriggerOnDestroy(this);

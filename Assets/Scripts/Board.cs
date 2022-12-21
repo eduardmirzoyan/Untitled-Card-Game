@@ -108,6 +108,15 @@ public class Board : ScriptableObject
         Debug.Log("Board is does not have any cards that can hold tokens.");
     }
 
+    public void CreateToken(ResourceToken token, TokenStack stack)
+    {
+        // Add to card's input stack
+        // card.AddTokenToInput(token);
+
+        // Trigger event
+        // TokenEvents.instance.TriggerOnCreate(token, card);
+    }
+
     public void CreateToken(ResourceToken token, Card card)
     {
         // Add to card's input stack

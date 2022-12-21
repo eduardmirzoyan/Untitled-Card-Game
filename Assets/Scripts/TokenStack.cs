@@ -9,8 +9,10 @@ public class TokenStack : ScriptableObject
     public Stack<ResourceToken> tokens;
     public int size;
 
-    public void Initialize()
+    public void Initialize(int stackLimit = 5)
     {
+        this.stackLimit = stackLimit;
+
         // Initialize stack
         tokens = new Stack<ResourceToken>();
         size = 0;
@@ -21,12 +23,16 @@ public class TokenStack : ScriptableObject
         // Add token to stack
         tokens.Push(token);
         size++;
+
+        // Trigger event
     }
 
     public ResourceToken PopToken()
     {
         // Return top token, retun null if empty
         if (tokens.Count == 0) return null;
+
+        // Trigger event?
 
         size--;
         return tokens.Pop();
