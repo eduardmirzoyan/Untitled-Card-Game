@@ -16,9 +16,12 @@ public class ResourceToken : ScriptableObject
         this.stack = stack;
     }
 
-    public void MoveTo(TokenStack newStack)
+    public bool MoveTo(TokenStack newStack)
     {
         var oldStack = this.stack;
+
+        // Debug
+        Debug.Log(ToString() + " was moved to " + newStack.name);
 
         // Check if previous stack exists
         if (oldStack != null)
@@ -35,6 +38,9 @@ public class ResourceToken : ScriptableObject
 
         // Trigger event
         TokenEvents.instance.TriggerOnMove(this, oldStack, newStack);
+        
+        // Return result
+        return true;
     }
 
     public void Destroy()
@@ -43,5 +49,10 @@ public class ResourceToken : ScriptableObject
 
         // Trigger event
         TokenEvents.instance.TriggerOnDestroy(this);
+    }
+
+    public override string ToString()
+    {
+        return tokenType.ToString() + " Token";
     }
 }

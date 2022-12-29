@@ -5,10 +5,10 @@ using UnityEngine;
 public class CardHandler : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private Transform tokenInputTransform;
-    [SerializeField] private Transform tokenOutputTransform;
+    [SerializeField] private StackHandler inputStack;
+    [SerializeField] private StackHandler outputStack;
     [SerializeField] private Vector3 homePosition;
-    [SerializeField] private GameObject tokenPrefab;
+    [SerializeField] private Outline outline;
 
     [Header("Data")]
     [SerializeField] private Card card;
@@ -16,38 +16,50 @@ public class CardHandler : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float pickUpHeight = 0.5f;
     [SerializeField] private LayerMask layerMask;
+    [SerializeField] private float outlineThickness = 5f;
 
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
 
     private void Start()
     {
-        // Set home to where it was spawned
-        homePosition = transform.position;
-
         // Sub
-        BoardEvents.instance.onMoveCard += MoveCard;
         CardEvents.instance.onDestroy += DestroyCard;
-        TokenEvents.instance.onCreate += CreateToken;
     }
 
     private void OnDestroy()
     {
         // Unsub
-        BoardEvents.instance.onMoveCard -= MoveCard;
         CardEvents.instance.onDestroy -= DestroyCard;
-        TokenEvents.instance.onCreate -= CreateToken;
     }
 
-    public void Initialize(Card card, Vector3 position)
+    public void Initialize(Card card, Transform homeTransform)
     {
         this.card = card;
-        transform.position = position;
+        transform.position = homeTransform.position;
+
+        // Disable outline
+        DisableOutline();
+
+        // Set home
+        SetHome(homeTransform);
+
+        // Initialize stacks
+        inputStack.Initialize(card.inputStack);
+        outputStack.Initialize(card.outputStack);
+
+        // Update name
+        name = this.ToString();
     }
 
-    private void OnMouseDown()
+    private void OnMouseEnter()
     {
-        // TODO?
+        EnableOutline();
+    }
+
+    private void OnMouseExit()
+    {
+        DisableOutline();
     }
 
     private void OnMouseDrag()
@@ -83,10 +95,7 @@ public class CardHandler : MonoBehaviour
     private void MoveCard()
     {
         // Raycast down from the mouse
-        Vector3 worldPosition = transform.position;
-        RaycastHit hitInfo;
-
-        var hit = Physics.Raycast(worldPosition, Vector3.down, out hitInfo, 10f, layerMask);
+        var hit = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hitInfo, 10f, layerMask);
 
         // Check to see if you hit a card slot
         if (hit)
@@ -94,40 +103,40 @@ public class CardHandler : MonoBehaviour
             if (hitInfo.transform.parent.TryGetComponent(out CardSlotHandler cardSlotHandler))
             {
                 // Debug
-                print(cardSlotHandler.ToString());
+                // print(cardSlotHandler.ToString());
 
-                // Get the closest nearby slot position
-                var newPosition = cardSlotHandler.GetCardSlot().position;
+                // Move token to new stack
+                var slot = cardSlotHandler.GetCardSlot();
+                var moved = card.MoveTo(slot);
 
-                // Move this card
-                card.cardSlot.board.MoveCard(card, card.cardSlot.position, newPosition);
+                // Check if move was sucessful
+                if (moved)
+                {
+                    // Debug
+                    // print(ToString() + " Relocated to " + cardSlotHandler.ToString());
 
-                // Move card to new stack
-                // var slot = cardSlotHandler.GetCardSlot();
-                // card.MoveTo(slot);
+                    // Get new location
+                    var newParent = cardSlotHandler.GetCardTransform();
+
+                    // Relocation token
+                    SetHome(newParent);
+                }
             }
         }
     }
 
     public void MoveCard(Card card, Vector2Int oldPosition, Vector2Int newPosition)
     {
+        // REMOVE THIS?
+
         if (this.card == card)
         {
             // Get world position from board
-            var worldPosition = BoardHandler.instance.GetWorldFromCell(newPosition);
+            // var worldPosition = BoardHandler.instance.GetWorldFromCell(newPosition);
 
             // Set new home
-            homePosition = worldPosition;
+            // homePosition = worldPosition;
         }
-    }
-
-    private void CreateToken(ResourceToken token, Card card)
-    {
-        if (this.card != card) return;
-
-        // Create the token object as a child
-        var tokenHandler = Instantiate(tokenPrefab, tokenInputTransform).GetComponent<TokenHandler>();
-        tokenHandler.Initialize(token);
     }
 
     private void DestroyCard(Card card)
@@ -138,14 +147,31 @@ public class CardHandler : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public Card GetCard()
+    private void SetHome(Transform parent)
     {
-        return card;
+        // Change parent
+        // transform.parent = parent;
+
+        // Set home
+        homePosition = parent.position;
+
+        // Give a big y offset
+        // transform.position += Vector3.up * initialYOffset;
     }
 
-    public Vector3 GetTokenInputPosition()
+    private void EnableOutline()
     {
-        return tokenInputTransform.position;
+        outline.OutlineWidth = outlineThickness;
+    }
+
+    private void DisableOutline()
+    {
+        outline.OutlineWidth = 0f;
+    }
+
+    public override string ToString()
+    {
+        return card.name + " Object";
     }
 
     private void OnDrawGizmosSelected()

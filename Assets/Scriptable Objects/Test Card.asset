@@ -17,8 +17,9 @@ MonoBehaviour:
   cost: {fileID: 0}
   usesLeft: 0
   isActive: 0
-  name: 
+  name: Test Card
   effectDescription: 
   sprite: {fileID: 0}
   inputStack: {fileID: 0}
   outputStack: {fileID: 0}
+  cardSlot: {fileID: 0}

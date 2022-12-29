@@ -29,7 +29,7 @@ public class CardSlot : ScriptableObject
         return card != null;
     }
 
-    public new string ToString()
+    public override string ToString()
     {
         var cardName = card != null ? card.name : "None";
         return "{ " + position.x + " , " + position.y + " } w/ Card: " + cardName;

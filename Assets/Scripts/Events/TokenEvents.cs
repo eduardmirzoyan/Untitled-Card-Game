@@ -18,15 +18,17 @@ public class TokenEvents : MonoBehaviour
         instance = this;
     }
 
-    public event Action<ResourceToken, Card> onCreate;
+    public event Action<ResourceToken, TokenStack> onCreate;
     public event Action<ResourceToken, TokenStack, TokenStack> onMove;
     public event Action<ResourceToken> onDestroy;
 
-    public void TriggerOnCreate(ResourceToken token, Card card)
+    public event Action<TokenHandler, StackHandler> onMoveWorld;
+
+    public void TriggerOnCreate(ResourceToken token, TokenStack stack)
     {
         if (onCreate != null)
         {
-            onCreate(token, card);
+            onCreate(token, stack);
         }
     }
 

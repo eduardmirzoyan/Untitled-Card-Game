@@ -10,6 +10,10 @@ public class Board : ScriptableObject
 
     public CardSlot[,] cardSlots;
 
+    public TokenStack[] resourceStacks;
+    public int numStacks;
+    public int stackCap = 10;
+
     public void Initialize(int width, int height)
     {
         this.width = width;
@@ -36,8 +40,30 @@ public class Board : ScriptableObject
         // Debug
         Debug.Log("Created new board w/ size: " + cardSlots.GetLength(0) + " x " + cardSlots.GetLength(1));
 
+        // Create side board
+        InitializeSide();
+
         // Trigger event
         BoardEvents.instance.TriggerOnInitalize(this);
+    }
+
+    private void InitializeSide()
+    {
+        int numStacks = System.Enum.GetValues(typeof(TokenType)).Length;
+
+        // Create new list
+        resourceStacks = new TokenStack[numStacks];
+
+        // Initialize stacks
+        for (int i = 0; i < resourceStacks.Length; i++)
+        {
+            // Create SO
+            resourceStacks[i] = ScriptableObject.CreateInstance<TokenStack>();
+            // Initialize
+            resourceStacks[i].Initialize(stackCap);
+        }
+
+        this.numStacks = numStacks;
     }
 
     public void CreateCard(Card card)
@@ -90,26 +116,30 @@ public class Board : ScriptableObject
 
     public void CreateToken(ResourceToken token)
     {
-        // Find the first open position
-        foreach (var cardslot in cardSlots)
+        // Loop through stockpile
+        foreach (var stack in resourceStacks)
         {
-            // Check to see if slot is has a card
-            if (cardslot.IsOccupied())
+            if (!stack.IsFull())
             {
-                // Create a token on the card
-                CreateToken(token, cardslot.card);
-
-                // Finish
+                // Create token on that stack
+                CreateToken(token, stack);
+                // Stop
                 break;
             }
         }
-
-        // Else the board does not have cards to create tokens on
-        Debug.Log("Board is does not have any cards that can hold tokens.");
     }
 
     public void CreateToken(ResourceToken token, TokenStack stack)
     {
+        // Debug
+        Debug.Log("Creating token: " + token.name);
+
+        // Add token to stack
+        stack.PushToken(token);
+
+        // Trigger event
+        TokenEvents.instance.TriggerOnCreate(token, stack);
+
         // Add to card's input stack
         // card.AddTokenToInput(token);
 
@@ -119,11 +149,13 @@ public class Board : ScriptableObject
 
     public void CreateToken(ResourceToken token, Card card)
     {
+        // TODO remove this
+
         // Add to card's input stack
         card.AddTokenToInput(token);
 
         // Trigger event
-        TokenEvents.instance.TriggerOnCreate(token, card);
+        TokenEvents.instance.TriggerOnCreate(token, null);
     }
 
     public void MoveCard(Card card, Vector2Int oldPosition, Vector2Int newPosition)

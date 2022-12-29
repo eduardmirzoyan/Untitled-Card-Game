@@ -6,6 +6,7 @@ public class TokenHandler : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private Vector3 homePosition;
+    [SerializeField] private Outline outline;
 
     [Header("Data")]
     [SerializeField] private ResourceToken token;
@@ -13,15 +14,14 @@ public class TokenHandler : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float pickUpHeight = 0.5f;
     [SerializeField] private LayerMask layerMask;
+    [SerializeField] private float initialYOffset = 5f;
+    [SerializeField] private float outlineThickness = 5f;
 
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
 
     private void Start()
     {
-        // Set home to where it was spawned
-        homePosition = transform.position;
-
         // Sub
         TokenEvents.instance.onDestroy += DestroyToken;
     }
@@ -32,14 +32,49 @@ public class TokenHandler : MonoBehaviour
         TokenEvents.instance.onDestroy -= DestroyToken;
     }
 
-    public void Initialize(ResourceToken token)
+    public void Initialize(ResourceToken token, Transform homeTransform)
     {
         this.token = token;
+        transform.position = homeTransform.position;
+
+        DisableOutline();
+
+        // Set home
+        SetHome(homeTransform);
+        
+        // Update name
+        name = this.ToString();
+    }
+
+    private void OnMouseEnter()
+    {
+        EnableOutline();
+    }
+
+    private void OnMouseExit()
+    {
+        DisableOutline();
+    }
+
+    private void OnMouseOver()
+    {
+        // Check for Right Click
+        if (Input.GetMouseButtonDown(1))
+        {
+            // Debug
+            print("Right clicked on token: " + ToString());
+
+            // Return token to correct stack
+            var stackHandler = BoardHandler.instance.GetStackHandler();
+
+            // Move to stack
+            MoveToStack(stackHandler);
+        }
     }
 
     private void OnMouseDown()
     {
-        // TODO?
+        // TODO
     }
 
     private void OnMouseDrag()
@@ -74,22 +109,18 @@ public class TokenHandler : MonoBehaviour
     private void AddToStack()
     {
         // Raycast down from the mouse
-        Vector3 worldPosition = transform.position;
-        RaycastHit hitInfo;
-
-        var hit = Physics.Raycast(worldPosition, Vector3.down, out hitInfo, 10f, layerMask);
+        var hit = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hitInfo, 10f, layerMask);
 
         // Check to see if you hit a card slot
         if (hit)
         {
-            if (hitInfo.transform.parent.TryGetComponent(out StackHandler stackHandler))
+            if (hitInfo.collider.transform.parent.TryGetComponent(out StackHandler stackHandler))
             {
                 // Debug
                 print(stackHandler.ToString());
 
-                // Move token to new stack
-                var stack = stackHandler.GetTokenStack();
-                token.MoveTo(stack);
+                // Move
+                MoveToStack(stackHandler);
             }
         }
     }
@@ -102,7 +133,50 @@ public class TokenHandler : MonoBehaviour
         Destroy(gameObject);
     }
 
-    
+    private void SetHome(Transform parent)
+    {
+        // Change parent
+        transform.parent = parent;
+        
+        // Set home
+        homePosition = parent.position;
+    }
+
+    private void MoveToStack(StackHandler stackHandler)
+    {
+        // Move token to new stack
+        var stack = stackHandler.GetTokenStack();
+        var moved = token.MoveTo(stack);
+
+        // Check if move was sucessful
+        if (moved)
+        {
+            // Debug
+            print(ToString() + " Relocated to " + stackHandler.ToString());
+
+            // Get new location
+            var newParent = stackHandler.GetTokenTransform();
+
+            // Relocation token
+            SetHome(newParent);
+        }
+    }
+
+    private void EnableOutline()
+    {
+        outline.OutlineWidth = outlineThickness;
+    }
+
+    private void DisableOutline()
+    {
+        outline.OutlineWidth = 0f;
+    }
+
+    public override string ToString()
+    {
+        return token.ToString() + " Object";
+    }
+
     private void OnDrawGizmosSelected()
     {
         // Make sure you are in debug mode

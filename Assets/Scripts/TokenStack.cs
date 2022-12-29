@@ -24,7 +24,7 @@ public class TokenStack : ScriptableObject
         tokens.Push(token);
         size++;
 
-        // Trigger event
+        // Trigger event ?
     }
 
     public ResourceToken PopToken()
@@ -36,6 +36,11 @@ public class TokenStack : ScriptableObject
 
         size--;
         return tokens.Pop();
+    }
+
+    public bool IsFull()
+    {
+        return size >= stackLimit;
     }
 
     public void ClearStack()

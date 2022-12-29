@@ -5,25 +5,27 @@ using UnityEngine;
 [CreateAssetMenu]
 public class SideBoard : ScriptableObject
 {
-    public TokenStack goldTokenStack;
-    public TokenStack foodTokenStack;
-    public TokenStack faithTokenStack;
-    public TokenStack manpowerTokenStack;
+    public TokenStack[] stacks;
+    public int numStacks;
+    public int stackCap = 10;
 
     public void Initialize()
     {
+        int numStacks = System.Enum.GetValues(typeof(TokenType)).Length;
+
+        // Create new list
+        stacks = new TokenStack[numStacks];
+
         // Initialize stacks
-        goldTokenStack = ScriptableObject.CreateInstance<TokenStack>();
-        goldTokenStack.Initialize(10);
+        for (int i = 0; i < stacks.Length; i++)
+        {
+            // Create SO
+            stacks[i] = ScriptableObject.CreateInstance<TokenStack>();
+            // Initialize
+            stacks[i].Initialize(stackCap);
+        }
 
-        foodTokenStack = ScriptableObject.CreateInstance<TokenStack>();
-        foodTokenStack.Initialize(10);
-
-        faithTokenStack = ScriptableObject.CreateInstance<TokenStack>();
-        faithTokenStack.Initialize(10);
-
-        manpowerTokenStack = ScriptableObject.CreateInstance<TokenStack>();
-        manpowerTokenStack.Initialize(10);
+        this.numStacks = numStacks;
 
         // Trigger event
         BoardEvents.instance.TriggerOnInitalizeSide(this);

@@ -5,8 +5,7 @@ using UnityEngine;
 public class SideBoardHandler : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private Transform[] stackTransforms;
-    [SerializeField] private GameObject stackPrefab;
+    [SerializeField] private StackHandler[] stackHandlers;
 
     [Header("Settings")]
     [SerializeField] private float tableThickness = 0.25f;
@@ -36,31 +35,21 @@ public class SideBoardHandler : MonoBehaviour
         // CURRENTLY HANDLED BY THE BOARD HANDLER NEED TO CHANGE
 
         // Position stack locations
-        int num = System.Enum.GetValues(typeof(TokenType)).Length;
-        float segment = transform.localScale.x / (num + 1);
+        float segment = transform.localScale.x / (sideBoard.numStacks + 1);
 
         Vector3 offset = new Vector3(transform.localScale.x / 2, 0, 0);
 
-        for (int i = 0; i < num; i++)
+        for (int i = 0; i < sideBoard.numStacks; i++)
         {
             // Calculate position
             Vector3 position = new Vector3((i + 1) * segment, transform.position.y, transform.position.z) - offset;
+            stackHandlers[i].transform.position = position;
+
+            // Initialize stacks
+            stackHandlers[i].Initialize(sideBoard.stacks[i]);
+
             // Create stack
             //var stack = Instantiate(stackPrefab, position, Quaternion.identity, transform);
-            stackTransforms[i].position = position;
         }
     }
-
-    private void ChangeParentScale(Transform parent, Vector3 scale)
-    {
-        List<Transform> children = new List<Transform>();
-        foreach (Transform child in parent)
-        {
-            child.parent = null;
-            children.Add(child);
-        }
-        parent.localScale = scale;
-        foreach (Transform child in children) child.parent = parent;
-    }
-
 }
