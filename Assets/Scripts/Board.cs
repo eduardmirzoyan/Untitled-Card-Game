@@ -135,53 +135,11 @@ public class Board : ScriptableObject
         Debug.Log("Creating token: " + token.name);
 
         // Add token to stack
-        stack.PushToken(token);
+        token.MoveTo(stack);
 
         // Trigger event
         TokenEvents.instance.TriggerOnCreate(token, stack);
 
-        // Add to card's input stack
-        // card.AddTokenToInput(token);
-
-        // Trigger event
-        // TokenEvents.instance.TriggerOnCreate(token, card);
-    }
-
-    public void CreateToken(ResourceToken token, Card card)
-    {
-        // TODO remove this
-
-        // Add to card's input stack
-        card.AddTokenToInput(token);
-
-        // Trigger event
-        TokenEvents.instance.TriggerOnCreate(token, null);
-    }
-
-    public void MoveCard(Card card, Vector2Int oldPosition, Vector2Int newPosition)
-    {
-        // Get respective slots
-        var oldSlot = cardSlots[oldPosition.x, oldPosition.y];
-        var newSlot = cardSlots[newPosition.x, newPosition.y];
-
-        // Make sure transfer is possible
-        if (newSlot.IsOccupied())
-        {
-            // Debug
-            Debug.Log("Position " + newPosition + " already has a card.");
-
-            // Finish
-            return;
-        }
-
-        // Set old slot to empty
-        oldSlot.SetCard(null);
-
-        // Set new slot to the card
-        newSlot.SetCard(card);
-
-        // Trigger event
-        BoardEvents.instance.TriggerOnMoveCard(card, oldPosition, newPosition);
     }
 
     public string ToStringVerbose()

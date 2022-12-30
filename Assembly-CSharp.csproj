@@ -39,7 +39,6 @@
      <Compile Include="Assets\QuickOutline\Scripts\Outline.cs" />
      <Compile Include="Assets\Scripts\Cost.cs" />
      <Compile Include="Assets\Scripts\Handlers\StackHandler.cs" />
-     <Compile Include="Assets\Scripts\Handlers\FixedSize.cs" />
      <Compile Include="Assets\Scripts\TokenStack.cs" />
      <Compile Include="Assets\Scripts\Handlers\BoardHandler.cs" />
      <Compile Include="Assets\Scripts\Handlers\GameHandler.cs" />
@@ -48,6 +47,7 @@
      <Compile Include="Assets\Scripts\SideBoard.cs" />
      <Compile Include="Assets\Scripts\Events\CardEvents.cs" />
      <Compile Include="Assets\Scripts\Handlers\TokenHandler.cs" />
+     <Compile Include="Assets\Scripts\UI\TimersUI.cs" />
      <Compile Include="Assets\Scripts\Events\BoardEvents.cs" />
      <Compile Include="Assets\Scripts\Handlers\CardHandler.cs" />
      <Compile Include="Assets\Scripts\Board.cs" />
@@ -58,10 +58,31 @@
      <Compile Include="Assets\Scripts\CardSlot.cs" />
      <Compile Include="Assets\Scripts\Game.cs" />
      <Compile Include="Assets\Scripts\Events\TokenEvents.cs" />
-     <Compile Include="Assets\Scripts\UI\TimersUI.cs" />
+     <Compile Include="Assets\Scripts\Handlers\TransferHandler.cs" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
      <None Include="Assets\QuickOutline\Resources\Shaders\OutlineMask.shader" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
+     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF.shader" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
+     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
      <None Include="Assets\QuickOutline\Readme.txt" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
      <None Include="Assets\QuickOutline\Resources\Shaders\OutlineFill.shader" />
+     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+     <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.1f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
@@ -760,6 +781,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="OEBIF.csproj">
+      <Project>{feb679b4-ef58-1aa6-1f6b-129104a0ab9d}</Project>
+      <Name>OEBIF</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

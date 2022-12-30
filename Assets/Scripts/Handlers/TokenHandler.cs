@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class TokenHandler : MonoBehaviour
 {
@@ -19,16 +20,19 @@ public class TokenHandler : MonoBehaviour
 
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
+    [SerializeField] private TextMeshProUGUI debugText;
 
     private void Start()
     {
         // Sub
+        TokenEvents.instance.onSelect += ToggleOutline;
         TokenEvents.instance.onDestroy += DestroyToken;
     }
 
     private void OnDestroy()
     {
         // Unsub
+        TokenEvents.instance.onSelect -= ToggleOutline;
         TokenEvents.instance.onDestroy -= DestroyToken;
     }
 
@@ -48,39 +52,36 @@ public class TokenHandler : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        EnableOutline();
+        // EnableOutline();
 
-        // Select tokens above as well
-        // token.stack.SelectToken(token);
-
-        // Trigger event
-        // instance.TriggerOnStartHover(token, stack)
+        // Deselect token
+        token.stack.SelectToken(token, true);
     }
 
-    private void OnStartHover(ResourceToken token)
+    private void ToggleOutline(ResourceToken token, bool state)
     {
-        if (this.token == token)
+        // Make sure it's this token
+        if (this.token != token) return;
+        
+        if (state)
         {
             // Highlight this token
             EnableOutline();
         }
-    }
-
-    private void OnStopHover(ResourceToken token)
-    {
-        if (this.token == token)
+        else 
         {
-            // Highlight this token
+            // Remove highlight
             DisableOutline();
         }
     }
 
     private void OnMouseExit()
     {
-        DisableOutline();
+        // DisableOutline();
 
-        // Deselect tokens above as well
-        // token.stack.DeselectToken(token);
+        // Select token
+        token.stack.SelectToken(token, false);
+
     }
 
     private void OnMouseOver()
@@ -102,6 +103,9 @@ public class TokenHandler : MonoBehaviour
     private void OnMouseDown()
     {
         // Move selected tokens in the stack into another transform
+
+        // Add to transfer
+        // TransferHandler.instance.AddToTransport(transform);
     }
 
     private void OnMouseDrag()
@@ -116,6 +120,9 @@ public class TokenHandler : MonoBehaviour
 
         // Return card to home position
         transform.position = homePosition;
+
+        // Clear transport
+        // TransferHandler.instance.AddToTransport(transform);
     }
 
     private void FollowMouse()
@@ -171,10 +178,17 @@ public class TokenHandler : MonoBehaviour
         transform.position = homePosition;
     }
 
+    public void Return()
+    {
+        // TODO
+        // Relocate(home);
+    }
+
     private void MoveToStack(StackHandler stackHandler)
     {
         // Move token to new stack
         var stack = stackHandler.GetTokenStack();
+        // Logic here
         var moved = token.MoveTo(stack);
 
         // Check if move was sucessful
@@ -213,5 +227,9 @@ public class TokenHandler : MonoBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawRay(transform.position, Vector3.down * 10f);
+
+        // Set debug text
+        debugText.text = "ID: " + gameObject.GetInstanceID();
+        // debugText.transform .rotation = Quaternion.LookRotation(transform.position - cam.transform.position);
     }
 }

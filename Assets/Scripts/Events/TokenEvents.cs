@@ -19,10 +19,12 @@ public class TokenEvents : MonoBehaviour
     }
 
     public event Action<ResourceToken, TokenStack> onCreate;
+    public event Action<ResourceToken, bool> onSelect;
     public event Action<ResourceToken, TokenStack, TokenStack> onMove;
     public event Action<ResourceToken> onDestroy;
 
-    public event Action<TokenHandler, StackHandler> onMoveWorld;
+    // ?
+    public event Action<ResourceToken, bool> onMoveSelect;
 
     public void TriggerOnCreate(ResourceToken token, TokenStack stack)
     {
@@ -37,6 +39,23 @@ public class TokenEvents : MonoBehaviour
         if (onMove != null)
         {
             onMove(token, fromStack, toStack);
+        }
+    }
+
+    public void TriggerOnSelect(ResourceToken token, bool state)
+    {
+        if (onSelect != null)
+        {
+            onSelect(token, state);
+        }
+    }
+
+    // TODO
+    public void TriggerOnMoveSelect(ResourceToken token, bool state)
+    {
+        if (onMoveSelect != null)
+        {
+            onMoveSelect(token, state);
         }
     }
 

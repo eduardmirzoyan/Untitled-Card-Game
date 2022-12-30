@@ -6,25 +6,24 @@ using UnityEngine;
 public class TokenStack : ScriptableObject
 {
     public int stackLimit = 5;
-    public Stack<ResourceToken> tokens;
-    public int size;
+    public List<ResourceToken> tokens;
+    public List<ResourceToken> selectedTokens;
 
     public void Initialize(int stackLimit = 5)
     {
         this.stackLimit = stackLimit;
 
         // Initialize stack
-        tokens = new Stack<ResourceToken>();
-        size = 0;
+        tokens = new List<ResourceToken>();
+
+        // Initialize list
+        selectedTokens = new List<ResourceToken>();
     }
 
     public void PushToken(ResourceToken token)
     {
-        // Add token to stack
-        tokens.Push(token);
-        size++;
-
-        // Trigger event?
+        // Add token to end of stack
+        tokens.Add(token);
     }
 
     public ResourceToken PopToken()
@@ -32,15 +31,19 @@ public class TokenStack : ScriptableObject
         // Return top token, retun null if empty
         if (tokens.Count == 0) return null;
 
-        // Trigger event?
+        // Save removed token
+        var removedToken = tokens[tokens.Count - 1];
 
-        size--;
-        return tokens.Pop();
+        // Remove top token
+        tokens.RemoveAt(tokens.Count - 1);
+
+        // Return removed token
+        return removedToken;
     }
 
     public bool IsFull()
     {
-        return size >= stackLimit;
+        return tokens.Count >= stackLimit;
     }
 
     public void ClearStack()
@@ -49,36 +52,49 @@ public class TokenStack : ScriptableObject
         while (tokens.Count > 0)
         {
             // Remove the token from the stack
-            var token = tokens.Pop();
+            var token = PopToken();
 
-            // Destroy the token
+            // Destroy the removed token
             token.Destroy();
         }
-        
-        size = 0;
     }
 
-    public void SelectToken(ResourceToken token)
+    public void SelectToken(ResourceToken selectedToken, bool state)
     {
-        bool isSelected = false;
-        // Loop through tokens
-        for (int i = 0; i < size; i++)
+        bool tokenFound = false;
+        // Check if you are selecting
+        if (state)
         {
-            // CHANGE TO ARRAY!!!
-
-            // If this token was found at i
-            if (isSelected) 
+            // Check if token exists
+            foreach (var token in tokens)
             {
-                // Trigger event
-                // instance.TriggerOnStartHover(token, stack)
-            }
-            else if (tokens.Peek() == token)
-            {
-                // Highlight this token and all above it
-                // instance.TriggerOnStartHover(token, stack)
+                // If token was already found or is now found
+                if (tokenFound || token == selectedToken)
+                {
+                    // Add to selected
+                    selectedTokens.Add(token);
 
-                isSelected = true;
+                    // Trigger event
+                    TokenEvents.instance.TriggerOnSelect(token, true);
+
+                    // Trigger flag
+                    tokenFound = true;
+                }
             }
         }
+        // Or deselecting
+        else
+        {
+            // Clear all selected tokens 
+            foreach (var token in selectedTokens)
+            {
+                // Trigger event
+                TokenEvents.instance.TriggerOnSelect(token, false);
+            }
+
+            // Clear tokens list
+            selectedTokens.Clear();
+        }
+        
     }
 }
