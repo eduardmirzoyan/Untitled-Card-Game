@@ -24,7 +24,7 @@ public class TokenStack : ScriptableObject
         tokens.Push(token);
         size++;
 
-        // Trigger event ?
+        // Trigger event?
     }
 
     public ResourceToken PopToken()
@@ -56,5 +56,29 @@ public class TokenStack : ScriptableObject
         }
         
         size = 0;
+    }
+
+    public void SelectToken(ResourceToken token)
+    {
+        bool isSelected = false;
+        // Loop through tokens
+        for (int i = 0; i < size; i++)
+        {
+            // CHANGE TO ARRAY!!!
+
+            // If this token was found at i
+            if (isSelected) 
+            {
+                // Trigger event
+                // instance.TriggerOnStartHover(token, stack)
+            }
+            else if (tokens.Peek() == token)
+            {
+                // Highlight this token and all above it
+                // instance.TriggerOnStartHover(token, stack)
+
+                isSelected = true;
+            }
+        }
     }
 }

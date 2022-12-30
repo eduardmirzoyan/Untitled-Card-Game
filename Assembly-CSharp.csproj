@@ -36,6 +36,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\QuickOutline\Scripts\Outline.cs" />
      <Compile Include="Assets\Scripts\Cost.cs" />
      <Compile Include="Assets\Scripts\Handlers\StackHandler.cs" />
      <Compile Include="Assets\Scripts\Handlers\FixedSize.cs" />
@@ -57,7 +58,7 @@
      <Compile Include="Assets\Scripts\CardSlot.cs" />
      <Compile Include="Assets\Scripts\Game.cs" />
      <Compile Include="Assets\Scripts\Events\TokenEvents.cs" />
-     <Compile Include="Assets\QuickOutline\Scripts\Outline.cs" />
+     <Compile Include="Assets\Scripts\UI\TimersUI.cs" />
      <None Include="Assets\QuickOutline\Resources\Shaders\OutlineMask.shader" />
      <None Include="Assets\QuickOutline\Readme.txt" />
      <None Include="Assets\QuickOutline\Resources\Shaders\OutlineFill.shader" />

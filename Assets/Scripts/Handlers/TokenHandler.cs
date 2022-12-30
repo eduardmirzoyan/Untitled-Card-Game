@@ -40,8 +40,8 @@ public class TokenHandler : MonoBehaviour
         DisableOutline();
 
         // Set home
-        SetHome(homeTransform);
-        
+        Relocate(homeTransform);
+
         // Update name
         name = this.ToString();
     }
@@ -49,11 +49,38 @@ public class TokenHandler : MonoBehaviour
     private void OnMouseEnter()
     {
         EnableOutline();
+
+        // Select tokens above as well
+        // token.stack.SelectToken(token);
+
+        // Trigger event
+        // instance.TriggerOnStartHover(token, stack)
+    }
+
+    private void OnStartHover(ResourceToken token)
+    {
+        if (this.token == token)
+        {
+            // Highlight this token
+            EnableOutline();
+        }
+    }
+
+    private void OnStopHover(ResourceToken token)
+    {
+        if (this.token == token)
+        {
+            // Highlight this token
+            DisableOutline();
+        }
     }
 
     private void OnMouseExit()
     {
         DisableOutline();
+
+        // Deselect tokens above as well
+        // token.stack.DeselectToken(token);
     }
 
     private void OnMouseOver()
@@ -74,7 +101,7 @@ public class TokenHandler : MonoBehaviour
 
     private void OnMouseDown()
     {
-        // TODO
+        // Move selected tokens in the stack into another transform
     }
 
     private void OnMouseDrag()
@@ -84,7 +111,6 @@ public class TokenHandler : MonoBehaviour
 
     private void OnMouseUp()
     {
-        
         // Token should check to see if there is a stack it can add itself to
         AddToStack();
 
@@ -133,13 +159,16 @@ public class TokenHandler : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void SetHome(Transform parent)
+    private void Relocate(Transform parent)
     {
         // Change parent
         transform.parent = parent;
-        
+
         // Set home
         homePosition = parent.position;
+
+        // Move to home
+        transform.position = homePosition;
     }
 
     private void MoveToStack(StackHandler stackHandler)
@@ -158,7 +187,7 @@ public class TokenHandler : MonoBehaviour
             var newParent = stackHandler.GetTokenTransform();
 
             // Relocation token
-            SetHome(newParent);
+            Relocate(newParent);
         }
     }
 

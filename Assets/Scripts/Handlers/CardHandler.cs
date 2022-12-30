@@ -42,7 +42,7 @@ public class CardHandler : MonoBehaviour
         DisableOutline();
 
         // Set home
-        SetHome(homeTransform);
+        Relocate(homeTransform);
 
         // Initialize stacks
         inputStack.Initialize(card.inputStack);
@@ -119,7 +119,7 @@ public class CardHandler : MonoBehaviour
                     var newParent = cardSlotHandler.GetCardTransform();
 
                     // Relocation token
-                    SetHome(newParent);
+                    Relocate(newParent);
                 }
             }
         }
@@ -147,7 +147,7 @@ public class CardHandler : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void SetHome(Transform parent)
+    private void Relocate(Transform parent)
     {
         // Change parent
         // transform.parent = parent;
@@ -155,8 +155,8 @@ public class CardHandler : MonoBehaviour
         // Set home
         homePosition = parent.position;
 
-        // Give a big y offset
-        // transform.position += Vector3.up * initialYOffset;
+        // Move to home
+        transform.position = homePosition;
     }
 
     private void EnableOutline()
