@@ -79,6 +79,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardPrefab: {fileID: 4536588672540182302, guid: 0a94ec2714ab59446a527ec4e557bc90, type: 3}
   cardDropTransform: {fileID: 4611846334027696483}
+  meshRenderer: {fileID: 7363593364798976114}
   cardSlot: {fileID: 0}
   debugMode: 1
   debugRadius: 0.1
@@ -131,7 +132,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8424300088536317520}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

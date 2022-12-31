@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using cakeslice;
 
 public class CardHandler : MonoBehaviour
 {
@@ -16,10 +17,11 @@ public class CardHandler : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float pickUpHeight = 0.5f;
     [SerializeField] private LayerMask layerMask;
-    [SerializeField] private float outlineThickness = 5f;
 
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
+
+    private CardSlotHandler cardSlotHandler;
 
     private void Start()
     {
@@ -55,17 +57,26 @@ public class CardHandler : MonoBehaviour
     private void OnMouseEnter()
     {
         EnableOutline();
+
+        // Trigger event
+        CardEvents.instance.TriggerOnDrag(card, true);
     }
 
     private void OnMouseExit()
     {
         DisableOutline();
+
+        // Trigger event
+        CardEvents.instance.TriggerOnDrag(card, false);
     }
 
     private void OnMouseDrag()
     {
         // Follow the mouse while slighly hovering over the board
         FollowMouse();
+
+        // Check for card handlers under
+        CheckForSlot();
     }
 
     private void OnMouseUp()
@@ -92,7 +103,7 @@ public class CardHandler : MonoBehaviour
         }
     }
 
-    private void MoveCard()
+    private void CheckForSlot()
     {
         // Raycast down from the mouse
         var hit = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hitInfo, 10f, layerMask);
@@ -102,40 +113,66 @@ public class CardHandler : MonoBehaviour
         {
             if (hitInfo.transform.parent.TryGetComponent(out CardSlotHandler cardSlotHandler))
             {
-                // Debug
-                // print(cardSlotHandler.ToString());
+                // Do nothing if same
+                if (this.cardSlotHandler == cardSlotHandler) return;
 
-                // Move token to new stack
-                var slot = cardSlotHandler.GetCardSlot();
-                var moved = card.MoveTo(slot);
-
-                // Check if move was sucessful
-                if (moved)
+                // Else check all 4 possibilities
+                if (this.cardSlotHandler != null && cardSlotHandler != null)
                 {
-                    // Debug
-                    // print(ToString() + " Relocated to " + cardSlotHandler.ToString());
+                    // Disable old
+                    CardEvents.instance.TriggerOnDrop(this.cardSlotHandler.GetCardSlot(), false);
 
-                    // Get new location
-                    var newParent = cardSlotHandler.GetCardTransform();
-
-                    // Relocation token
-                    Relocate(newParent);
+                    // Enable new
+                    CardEvents.instance.TriggerOnDrop(cardSlotHandler.GetCardSlot(), true);
                 }
+                else if (this.cardSlotHandler == null && cardSlotHandler != null)
+                {
+                    // Enable new
+                    CardEvents.instance.TriggerOnDrop(cardSlotHandler.GetCardSlot(), true);
+                }
+                else if (this.cardSlotHandler != null && cardSlotHandler == null)
+                {
+                    // Disable old
+                    CardEvents.instance.TriggerOnDrop(this.cardSlotHandler.GetCardSlot(), false);
+                }
+                else if (this.cardSlotHandler == null && cardSlotHandler == null)
+                {
+                    // Nothing lol
+                }
+
+                // Update slot
+                this.cardSlotHandler = cardSlotHandler;
             }
         }
     }
 
-    public void MoveCard(Card card, Vector2Int oldPosition, Vector2Int newPosition)
+    private void MoveCard()
     {
-        // REMOVE THIS?
-
-        if (this.card == card)
+        // If you've found a slot
+        if (cardSlotHandler != null)
         {
-            // Get world position from board
-            // var worldPosition = BoardHandler.instance.GetWorldFromCell(newPosition);
+            // Move token to new stack
+            var slot = cardSlotHandler.GetCardSlot();
+            var moved = card.MoveTo(slot);
 
-            // Set new home
-            // homePosition = worldPosition;
+            // Check if move was sucessful
+            if (moved)
+            {
+                // Debug
+                // print(ToString() + " Relocated to " + cardSlotHandler.ToString());
+
+                // Get new location
+                var newParent = cardSlotHandler.GetCardTransform();
+
+                // Relocation token
+                Relocate(newParent);
+            }
+
+            // Trigger event
+            CardEvents.instance.TriggerOnDrop(slot, false);
+
+            // Reset
+            cardSlotHandler = null;
         }
     }
 
@@ -161,12 +198,12 @@ public class CardHandler : MonoBehaviour
 
     private void EnableOutline()
     {
-        outline.OutlineWidth = outlineThickness;
+        outline.eraseRenderer = false;
     }
 
     private void DisableOutline()
     {
-        outline.OutlineWidth = 0f;
+        outline.eraseRenderer = true;
     }
 
     public override string ToString()

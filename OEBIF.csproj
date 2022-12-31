@@ -36,13 +36,13 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\OutlineEffect\Samples\Demo\MaterialSwitcher.cs" />
-     <Compile Include="Assets\OutlineEffect\Samples\Demo\OutlineAnimation.cs" />
-     <Compile Include="Assets\OutlineEffect\Samples\Demo\Rotate.cs" />
-     <Compile Include="Assets\OutlineEffect\Samples\Demo\Toggle.cs" />
      <Compile Include="Assets\OutlineEffect\OutlineEffect\LinkedSet.cs" />
-     <Compile Include="Assets\OutlineEffect\OutlineEffect\Outline.cs" />
+     <Compile Include="Assets\OutlineEffect\Samples\Demo\Rotate.cs" />
+     <Compile Include="Assets\OutlineEffect\Samples\Demo\OutlineAnimation.cs" />
+     <Compile Include="Assets\OutlineEffect\Samples\Demo\Toggle.cs" />
      <Compile Include="Assets\OutlineEffect\OutlineEffect\OutlineEffect.cs" />
+     <Compile Include="Assets\OutlineEffect\Samples\Demo\MaterialSwitcher.cs" />
+     <Compile Include="Assets\OutlineEffect\OutlineEffect\Outline.cs" />
      <None Include="Assets\OutlineEffect\OutlineEffect\Resources\OutlineBufferShader.shader" />
      <None Include="Assets\OutlineEffect\OutlineEffect.asmdef" />
      <None Include="Assets\OutlineEffect\OutlineEffect\Resources\OutlineShader.shader" />

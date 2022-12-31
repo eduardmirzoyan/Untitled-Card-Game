@@ -228,7 +228,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tokenPrefab: {fileID: 19566318085068043, guid: d9690a54daac9274592a9de08b4fdee4, type: 3}
   tokenDropPosition: {fileID: 704896615}
-  tokenStack: {fileID: 0}
+  meshRenderer: {fileID: 946096506}
+  stack: {fileID: 0}
   debugMode: 1
   debugRadius: 0.1
 --- !u!1 &335524766
@@ -475,7 +476,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 94be0d5154735aa448452875edd14d62, type: 2}
+  - {fileID: 2100000, guid: c71f85caa86756d4eaae75d7ae23f0bb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -759,6 +760,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tokenHandlers: []
   pickUpHeight: 0.5
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &745502681
 GameObject:
   m_ObjectHideFlags: 0
@@ -844,7 +848,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 94be0d5154735aa448452875edd14d62, type: 2}
+  - {fileID: 2100000, guid: c71f85caa86756d4eaae75d7ae23f0bb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -941,7 +945,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 94be0d5154735aa448452875edd14d62, type: 2}
+  - {fileID: 2100000, guid: c71f85caa86756d4eaae75d7ae23f0bb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1116,7 +1120,7 @@ MonoBehaviour:
   lineThickness: 1.25
   lineIntensity: 0.5
   fillAmount: 0.2
-  lineColor0: {r: 1, g: 0, b: 0, a: 1}
+  lineColor0: {r: 1, g: 1, b: 1, a: 1}
   lineColor1: {r: 0, g: 1, b: 0, a: 1}
   lineColor2: {r: 0, g: 0, b: 1, a: 1}
   additiveRendering: 0
@@ -1188,7 +1192,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 94be0d5154735aa448452875edd14d62, type: 2}
+  - {fileID: 2100000, guid: c71f85caa86756d4eaae75d7ae23f0bb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1407,7 +1411,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tokenPrefab: {fileID: 19566318085068043, guid: d9690a54daac9274592a9de08b4fdee4, type: 3}
   tokenDropPosition: {fileID: 1099665850}
-  tokenStack: {fileID: 0}
+  meshRenderer: {fileID: 946029830}
+  stack: {fileID: 0}
   debugMode: 1
   debugRadius: 0.1
 --- !u!1 &1522817229
@@ -1458,7 +1463,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tokenPrefab: {fileID: 19566318085068043, guid: d9690a54daac9274592a9de08b4fdee4, type: 3}
   tokenDropPosition: {fileID: 403016817}
-  tokenStack: {fileID: 0}
+  meshRenderer: {fileID: 473142894}
+  stack: {fileID: 0}
   debugMode: 1
   debugRadius: 0.1
 --- !u!1 &1570464093
@@ -1585,7 +1591,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tokenPrefab: {fileID: 19566318085068043, guid: d9690a54daac9274592a9de08b4fdee4, type: 3}
   tokenDropPosition: {fileID: 1570464094}
-  tokenStack: {fileID: 0}
+  meshRenderer: {fileID: 999738899}
+  stack: {fileID: 0}
   debugMode: 1
   debugRadius: 0.1
 --- !u!1 &1921865041

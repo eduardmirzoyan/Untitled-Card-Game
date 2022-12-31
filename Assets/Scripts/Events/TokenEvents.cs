@@ -19,12 +19,14 @@ public class TokenEvents : MonoBehaviour
     }
 
     public event Action<ResourceToken, TokenStack> onCreate;
-    public event Action<ResourceToken, bool> onSelect;
-    public event Action<ResourceToken, TokenStack, TokenStack> onMove;
-    public event Action<ResourceToken> onDestroy;
 
-    // ?
-    public event Action<ResourceToken, bool> onMoveSelect;
+    public event Action<ResourceToken, bool> onHover;
+    public event Action<ResourceToken> onDrag;
+    public event Action<TokenStack, bool> onDrop;
+    public event Action<ResourceToken> onBlur;
+
+
+    public event Action<ResourceToken> onDestroy;
 
     public void TriggerOnCreate(ResourceToken token, TokenStack stack)
     {
@@ -34,28 +36,35 @@ public class TokenEvents : MonoBehaviour
         }
     }
 
-    public void TriggerOnMove(ResourceToken token, TokenStack fromStack, TokenStack toStack)
+    public void TriggerOnHover(ResourceToken token, bool state)
     {
-        if (onMove != null)
+        if (onHover != null)
         {
-            onMove(token, fromStack, toStack);
+            onHover(token, state);
         }
     }
 
-    public void TriggerOnSelect(ResourceToken token, bool state)
+    public void TriggerOnDrag(ResourceToken token)
     {
-        if (onSelect != null)
+        if (onDrag != null)
         {
-            onSelect(token, state);
+            onDrag(token);
         }
     }
 
-    // TODO
-    public void TriggerOnMoveSelect(ResourceToken token, bool state)
+    public void TriggerOnDrop(TokenStack stack, bool state)
     {
-        if (onMoveSelect != null)
+        if (onDrop != null)
         {
-            onMoveSelect(token, state);
+            onDrop(stack, state);
+        }
+    }
+
+    public void TriggerOnBlur(ResourceToken token)
+    {
+        if (onBlur != null)
+        {
+            onBlur(token);
         }
     }
 

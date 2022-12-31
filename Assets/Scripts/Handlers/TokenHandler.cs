@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using cakeslice;
 
 public class TokenHandler : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private Vector3 homePosition;
     [SerializeField] private Outline outline;
+    [SerializeField] private Rigidbody body;
+    [SerializeField] private MeshRenderer meshRenderer;
 
     [Header("Data")]
     [SerializeField] private ResourceToken token;
@@ -15,73 +18,103 @@ public class TokenHandler : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float pickUpHeight = 0.5f;
     [SerializeField] private LayerMask layerMask;
-    [SerializeField] private float initialYOffset = 5f;
-    [SerializeField] private float outlineThickness = 5f;
 
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
     [SerializeField] private TextMeshProUGUI debugText;
 
+    private StackHandler stackHandler;
+
     private void Start()
     {
         // Sub
-        TokenEvents.instance.onSelect += ToggleOutline;
+        TokenEvents.instance.onHover += OnHover;
+        TokenEvents.instance.onDrag += OnDrag;
+        TokenEvents.instance.onDrop += OnDrop;
+        TokenEvents.instance.onBlur += OnBlur;
+
+
         TokenEvents.instance.onDestroy += DestroyToken;
     }
 
     private void OnDestroy()
     {
         // Unsub
-        TokenEvents.instance.onSelect -= ToggleOutline;
+        TokenEvents.instance.onHover -= OnHover;
+        TokenEvents.instance.onDrag -= OnDrag;
+        TokenEvents.instance.onDrop -= OnDrop;
+        TokenEvents.instance.onBlur -= OnBlur;
+
         TokenEvents.instance.onDestroy -= DestroyToken;
     }
 
-    public void Initialize(ResourceToken token, Transform homeTransform)
+    public void Initialize(ResourceToken token, StackHandler stackHandler)
     {
         this.token = token;
-        transform.position = homeTransform.position;
+        this.stackHandler = stackHandler;
 
+        // Disable outline
         DisableOutline();
 
         // Set home
-        Relocate(homeTransform);
+        Relocate(stackHandler);
+
+        // Generate random color
+        meshRenderer.material.color = UnityEngine.Random.ColorHSV();
 
         // Update name
         name = this.ToString();
     }
 
-    private void OnMouseEnter()
+    private void OnBlur(ResourceToken token)
     {
-        // EnableOutline();
+        if (this.token != token) return;
 
-        // Deselect token
-        token.stack.SelectToken(token, true);
+        // TODO
     }
 
-    private void ToggleOutline(ResourceToken token, bool state)
+    private void OnDrop(TokenStack stack, bool state)
     {
-        // Make sure it's this token
-        if (this.token != token) return;
-        
-        if (state)
-        {
-            // Highlight this token
-            EnableOutline();
-        }
-        else 
-        {
-            // Remove highlight
-            DisableOutline();
-        }
+        // if (this.token != token) return;
+
+        // TODO
+    }
+
+    private void OnMouseEnter()
+    {
+        // Select token
+        token.SelectToken(true);
     }
 
     private void OnMouseExit()
     {
-        // DisableOutline();
+        // Deselect token
+        token.SelectToken(false);
+    }
 
-        // Select token
-        token.stack.SelectToken(token, false);
+    private void OnMouseDown()
+    {
+        // This is the controller -> logic
 
+        // ?
+        TransferHandler.instance.GatherTransport(); // ?
+
+        // Drag tokens
+        token.DragTokens();
+    }
+
+    private void OnMouseDrag()
+    {
+        // Do nothing
+    }
+
+    private void OnMouseUp()
+    {
+        // Stop selecting
+        token.SelectToken(false);
+
+        // Drop transport
+        TransferHandler.instance.DropTransport();
     }
 
     private void OnMouseOver()
@@ -100,29 +133,35 @@ public class TokenHandler : MonoBehaviour
         }
     }
 
-    private void OnMouseDown()
-    {
-        // Move selected tokens in the stack into another transform
 
-        // Add to transfer
-        // TransferHandler.instance.AddToTransport(transform);
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    private void OnHover(ResourceToken token, bool state)
+    {
+        // Make sure it's this token
+        if (this.token != token) return;
+
+        if (state)
+        {
+            // Highlight this token
+            EnableOutline();
+        }
+        else
+        {
+            // Remove highlight
+            DisableOutline();
+        }
     }
 
-    private void OnMouseDrag()
+    private void OnDrag(ResourceToken token)
     {
-        FollowMouse();
-    }
+        // This acts as the logic -> visual
 
-    private void OnMouseUp()
-    {
-        // Token should check to see if there is a stack it can add itself to
-        AddToStack();
-
-        // Return card to home position
-        transform.position = homePosition;
-
-        // Clear transport
-        // TransferHandler.instance.AddToTransport(transform);
+        // Make sure it's this token
+        if (this.token != token) return;
+        
+        // Add to transport
+        TransferHandler.instance.PickupTransport(this);
     }
 
     private void FollowMouse()
@@ -139,7 +178,7 @@ public class TokenHandler : MonoBehaviour
         }
     }
 
-    private void AddToStack()
+    private void SearchForStack()
     {
         // Raycast down from the mouse
         var hit = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hitInfo, 10f, layerMask);
@@ -149,12 +188,48 @@ public class TokenHandler : MonoBehaviour
         {
             if (hitInfo.collider.transform.parent.TryGetComponent(out StackHandler stackHandler))
             {
-                // Debug
-                print(stackHandler.ToString());
+                // Do nothing if same
+                if (this.stackHandler == stackHandler) return;
 
-                // Move
-                MoveToStack(stackHandler);
+                // Else check all 4 possibilities
+                if (this.stackHandler != null && stackHandler != null)
+                {
+                    // Disable old
+                    TokenEvents.instance.TriggerOnDrop(this.stackHandler.GetTokenStack(), false);
+
+                    // Enable new
+                    TokenEvents.instance.TriggerOnDrop(stackHandler.GetTokenStack(), true);
+                }
+                else if (this.stackHandler == null && stackHandler != null)
+                {
+                    // Enable new
+                    TokenEvents.instance.TriggerOnDrop(stackHandler.GetTokenStack(), true);
+                }
+                else if (this.stackHandler != null && stackHandler == null)
+                {
+                    // Disable old
+                    TokenEvents.instance.TriggerOnDrop(this.stackHandler.GetTokenStack(), false);
+                }
+                else if (this.stackHandler == null && stackHandler == null)
+                {
+                    // Nothing lol
+                }
+
+                // Update stack
+                this.stackHandler = stackHandler;
             }
+        }
+    }
+
+    private void MoveToken()
+    {
+        if (this.stackHandler != null)
+        {
+            // Debug
+            print(stackHandler.ToString());
+
+            // Move
+            MoveToStack(this.stackHandler);
         }
     }
 
@@ -166,25 +241,19 @@ public class TokenHandler : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void Relocate(Transform parent)
+    private void Relocate(StackHandler stackHandler)
     {
         // Change parent
-        transform.parent = parent;
+        transform.parent = stackHandler.GetTokenTransform();
 
-        // Set home
-        homePosition = parent.position;
+        // Set new home
+        homePosition = stackHandler.GetTokenPosition();
 
         // Move to home
         transform.position = homePosition;
     }
 
-    public void Return()
-    {
-        // TODO
-        // Relocate(home);
-    }
-
-    private void MoveToStack(StackHandler stackHandler)
+    public void MoveToStack(StackHandler stackHandler)
     {
         // Move token to new stack
         var stack = stackHandler.GetTokenStack();
@@ -197,22 +266,30 @@ public class TokenHandler : MonoBehaviour
             // Debug
             print(ToString() + " Relocated to " + stackHandler.ToString());
 
-            // Get new location
-            var newParent = stackHandler.GetTokenTransform();
-
             // Relocation token
-            Relocate(newParent);
+            Relocate(stackHandler);
         }
+    }
+
+    public void ReturnToStack()
+    {
+        if (stackHandler != null) MoveToStack(stackHandler);
+        else throw new System.Exception("ERROR!");
     }
 
     private void EnableOutline()
     {
-        outline.OutlineWidth = outlineThickness;
+        outline.eraseRenderer = false;
     }
 
     private void DisableOutline()
     {
-        outline.OutlineWidth = 0f;
+        outline.eraseRenderer = true;
+    }
+
+    public void ToggleGravity(bool state)
+    {
+        body.useGravity = state;
     }
 
     public override string ToString()
@@ -229,7 +306,7 @@ public class TokenHandler : MonoBehaviour
         Gizmos.DrawRay(transform.position, Vector3.down * 10f);
 
         // Set debug text
-        debugText.text = "ID: " + gameObject.GetInstanceID();
-        // debugText.transform .rotation = Quaternion.LookRotation(transform.position - cam.transform.position);
+
+        debugText.text = token.ToString();
     }
 }

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 19566317043423214}
   - component: {fileID: 19566317043423215}
   - component: {fileID: 19566317043423201}
-  - component: {fileID: 937349602202479401}
   - component: {fileID: 2384122680621142579}
   m_Layer: 10
   m_Name: Body
@@ -100,24 +99,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &937349602202479401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 19566317043423210}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  outlineMode: 1
-  outlineColor: {r: 1, g: 0, b: 0, a: 1}
-  outlineWidth: 4
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!114 &2384122680621142579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: 0
-  eraseRenderer: 0
+  eraseRenderer: 1
 --- !u!1 &19566318085068043
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,14 +177,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   homePosition: {x: 0, y: 0, z: 0}
-  outline: {fileID: 937349602202479401}
+  outline: {fileID: 2384122680621142579}
+  body: {fileID: 19566318085068045}
+  meshRenderer: {fileID: 19566317043423215}
   token: {fileID: 0}
   pickUpHeight: 0.5
   layerMask:
     serializedVersion: 2
     m_Bits: 512
-  initialYOffset: 5
-  outlineThickness: 5
   debugMode: 1
   debugText: {fileID: 1455600218079816884}
 --- !u!1 &788921154403845881
@@ -272,7 +253,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'ID: 29716'
+  m_text: 'ID: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

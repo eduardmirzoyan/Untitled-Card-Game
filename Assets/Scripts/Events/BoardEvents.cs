@@ -22,9 +22,6 @@ public class BoardEvents : MonoBehaviour
     public event Action<Card, Vector2Int> onCreateCard;
     public event Action<Card, Vector2Int, Vector2Int> onMoveCard;
 
-    // Side board events
-    public event Action<SideBoard> onInitializeSide;
-
     public void TriggerOnInitalize(Board board)
     {
         if (onInitialize != null)
@@ -46,14 +43,6 @@ public class BoardEvents : MonoBehaviour
         if (onMoveCard != null)
         {
             onMoveCard(card, oldPosition, newPosition);
-        }
-    }
-
-    public void TriggerOnInitalizeSide(SideBoard sideBoard)
-    {
-        if (onInitializeSide != null)
-        {
-            onInitializeSide(sideBoard);
         }
     }
 }

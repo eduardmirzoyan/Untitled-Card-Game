@@ -80,7 +80,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2759008840224264878}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -93,7 +93,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a2af89638b3a08444a4fd5fb0bb951d9, type: 2}
+  - {fileID: 2100000, guid: c71f85caa86756d4eaae75d7ae23f0bb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -177,6 +177,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tokenPrefab: {fileID: 19566318085068043, guid: d9690a54daac9274592a9de08b4fdee4, type: 3}
   tokenDropPosition: {fileID: 7709727434175893153}
-  tokenStack: {fileID: 0}
+  meshRenderer: {fileID: 2759008840224264881}
+  stack: {fileID: 0}
   debugMode: 1
   debugRadius: 0.05

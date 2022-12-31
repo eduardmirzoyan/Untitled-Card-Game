@@ -7,6 +7,7 @@ public enum TokenType { Food, Faith, Gold, Manpower };
 [CreateAssetMenu]
 public class ResourceToken : ScriptableObject
 {
+    public new string name;
     public TokenType tokenType;
     public TokenStack stack;
 
@@ -14,6 +15,22 @@ public class ResourceToken : ScriptableObject
     {
         this.tokenType = tokenType;
         this.stack = stack;
+    }
+
+    public void SelectToken(bool state)
+    {
+        // ?
+        stack.SelectToken(this, state);
+    }
+
+    public List<ResourceToken> GetTokensUntilTop()
+    {
+        return null;
+    }
+
+    public void DragTokens()
+    {
+        stack.DragSelectedTokens();
     }
 
     public bool MoveTo(TokenStack newStack)
@@ -35,9 +52,6 @@ public class ResourceToken : ScriptableObject
 
         // Update card slot
         this.stack = newStack;
-
-        // Trigger event
-        TokenEvents.instance.TriggerOnMove(this, oldStack, newStack);
         
         // Return result
         return true;
@@ -53,6 +67,6 @@ public class ResourceToken : ScriptableObject
 
     public override string ToString()
     {
-        return tokenType.ToString() + " Token";
+        return tokenType.ToString() + " " + GetInstanceID();
     }
 }

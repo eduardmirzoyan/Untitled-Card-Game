@@ -37,6 +37,9 @@ public class GameHandler : MonoBehaviour
                 // Get a copy of a random token
                 var randomToken = Instantiate(debugTokens[Random.Range(0, debugTokens.Count)]);
 
+                // Set name
+                randomToken.name = randomToken.ToString();
+
                 // Create the token on the board
                 game.board.CreateToken(randomToken);
             }

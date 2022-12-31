@@ -7,9 +7,10 @@ public class StackHandler : MonoBehaviour
     [Header("Components")]
     [SerializeField] private GameObject tokenPrefab;
     [SerializeField] private Transform tokenDropPosition;
+    [SerializeField] private MeshRenderer meshRenderer;
 
     [Header("Data")]
-    [SerializeField] private TokenStack tokenStack;
+    [SerializeField] private TokenStack stack;
 
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
@@ -19,30 +20,71 @@ public class StackHandler : MonoBehaviour
     {
         // Sub
         TokenEvents.instance.onCreate += CreateToken;
+        TokenEvents.instance.onDrop += ToggleHighlight;
     }
 
     private void OnDestroy()
     {
         // Unsub
         TokenEvents.instance.onCreate -= CreateToken;
+        TokenEvents.instance.onDrop -= ToggleHighlight;
     }
 
-    public void Initialize(TokenStack tokenStack)
+    public void Initialize(TokenStack stack)
     {
-        this.tokenStack = tokenStack;
+        this.stack = stack;
 
         // TODO?
     }
 
-    private void CreateToken(ResourceToken token, TokenStack tokenStack)
+    public Vector3 GetTokenPosition()
+    {
+        if (stack == null) return tokenDropPosition.position;
+
+        float tokenThickness = 0.1f;
+
+        // Calculate position to add token based on stack
+        return tokenDropPosition.position + Vector3.up * tokenThickness * stack.GetSize();
+    }
+
+    private void CreateToken(ResourceToken token, TokenStack stack)
     {
         // If this stack wasnt choosen
-        if (this.tokenStack != tokenStack) return;
+        if (this.stack != stack) return;
 
         // Create the token object
         var tokenHandler = Instantiate(tokenPrefab).GetComponent<TokenHandler>();
         // Initialize it
-        tokenHandler.Initialize(token, tokenDropPosition);
+        tokenHandler.Initialize(token, this);
+    }
+
+    private void ToggleHighlight(TokenStack stack, bool state)
+    {
+        // Make sure it's this slot
+        if (this.stack != stack) return;
+
+        if (state)
+        {
+            // Highlight this slot
+            EnableHighlight();
+        }
+        else
+        {
+            // Remove highlight
+            DisableHighlight();
+        }
+    }
+
+    private void EnableHighlight()
+    {
+        // Show mesh
+        meshRenderer.enabled = true;
+    }
+
+    private void DisableHighlight()
+    {
+        // Hide mesh
+        meshRenderer.enabled = false;
     }
 
     public Transform GetTokenTransform()
@@ -52,7 +94,7 @@ public class StackHandler : MonoBehaviour
 
     public TokenStack GetTokenStack()
     {
-        return tokenStack;
+        return stack;
     }
 
     private void OnDrawGizmosSelected()
@@ -61,6 +103,6 @@ public class StackHandler : MonoBehaviour
         if (!debugMode) return;
 
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(tokenDropPosition.position, debugRadius);
+        Gizmos.DrawSphere(GetTokenPosition(), debugRadius);
     }
 }

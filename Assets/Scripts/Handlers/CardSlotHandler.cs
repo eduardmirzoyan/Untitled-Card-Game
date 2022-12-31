@@ -7,6 +7,7 @@ public class CardSlotHandler : MonoBehaviour
     [Header("Components")]
     [SerializeField] private GameObject cardPrefab;
     [SerializeField] private Transform cardDropTransform;
+    [SerializeField] private MeshRenderer meshRenderer;
 
     [Header("Data")]
     [SerializeField] private CardSlot cardSlot;
@@ -19,13 +20,14 @@ public class CardSlotHandler : MonoBehaviour
     {
         // Sub to events
         BoardEvents.instance.onCreateCard += CreateCard;
+        CardEvents.instance.onDrop += ToggleHighlight;
     }
 
     private void OnDestroy()
     {
         // Unsub
         BoardEvents.instance.onCreateCard -= CreateCard;
-        
+        CardEvents.instance.onDrop -= ToggleHighlight;
     }
 
     public void Initialize(CardSlot cardSlot, Vector3 position)
@@ -44,6 +46,35 @@ public class CardSlotHandler : MonoBehaviour
         // Create the card object
         var cardHandler = Instantiate(cardPrefab).GetComponent<CardHandler>();
         cardHandler.Initialize(card, cardDropTransform);
+    }
+
+    private void ToggleHighlight(CardSlot cardSlot, bool state)
+    {
+        // Make sure it's this slot
+        if (this.cardSlot != cardSlot) return;
+
+        if (state)
+        {
+            // Highlight this slot
+            EnableHighlight();
+        }
+        else
+        {
+            // Remove highlight
+            DisableHighlight();
+        }
+    }
+
+    private void EnableHighlight()
+    {
+        // Show mesh
+        meshRenderer.enabled = true;
+    }
+
+    private void DisableHighlight()
+    {
+        // Hide mesh
+        meshRenderer.enabled = false;
     }
 
     public Transform GetCardTransform()

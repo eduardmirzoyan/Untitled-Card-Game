@@ -321,7 +321,7 @@ MonoBehaviour:
   inputStack: {fileID: 2984318360974618429}
   outputStack: {fileID: 4668930208529408018}
   homePosition: {x: 0, y: 0, z: 0}
-  outline: {fileID: 6970585057774196182}
+  outline: {fileID: 3749533533962850269}
   card: {fileID: 0}
   pickUpHeight: 0.5
   layerMask:
@@ -341,7 +341,7 @@ GameObject:
   - component: {fileID: 4536588672911265935}
   - component: {fileID: 4536588672911265936}
   - component: {fileID: 4536588672911265937}
-  - component: {fileID: 6970585057774196182}
+  - component: {fileID: 3749533533962850269}
   m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
@@ -428,7 +428,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6970585057774196182
+--- !u!114 &3749533533962850269
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -437,15 +437,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4536588672911265939}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  outlineMode: 0
-  outlineColor: {r: 0.9716981, g: 0.83499986, b: 0, a: 1}
-  outlineWidth: 4
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
+  color: 0
+  eraseRenderer: 1
 --- !u!1 &6888473140429041434
 GameObject:
   m_ObjectHideFlags: 0

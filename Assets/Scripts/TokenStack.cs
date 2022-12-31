@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 [CreateAssetMenu]
 public class TokenStack : ScriptableObject
@@ -59,12 +60,36 @@ public class TokenStack : ScriptableObject
         }
     }
 
+    public List<ResourceToken> GetTokensUntilTop(ResourceToken token)
+    {
+        // Get index of token
+        int index = tokens.IndexOf(token);
+
+        // Error handling
+        if (index < 0) throw new System.Exception("TOKEN NOT FOUND: " + token.ToString());
+
+        // Loop through all tokens
+        List<ResourceToken> result = new List<ResourceToken>();
+        for (int i = 0; i < tokens.Count; i++)
+        {
+            // If they are at or greater than the index, then add em
+            if (i >= index)
+            {
+                result.Add(tokens[i]);
+            }
+        }
+
+        return result;
+    }
+
     public void SelectToken(ResourceToken selectedToken, bool state)
     {
-        bool tokenFound = false;
         // Check if you are selecting
         if (state)
         {
+            // Init flag
+            bool tokenFound = false;
+
             // Check if token exists
             foreach (var token in tokens)
             {
@@ -75,7 +100,7 @@ public class TokenStack : ScriptableObject
                     selectedTokens.Add(token);
 
                     // Trigger event
-                    TokenEvents.instance.TriggerOnSelect(token, true);
+                    TokenEvents.instance.TriggerOnHover(token, true);
 
                     // Trigger flag
                     tokenFound = true;
@@ -89,12 +114,26 @@ public class TokenStack : ScriptableObject
             foreach (var token in selectedTokens)
             {
                 // Trigger event
-                TokenEvents.instance.TriggerOnSelect(token, false);
+                TokenEvents.instance.TriggerOnHover(token, false);
             }
 
             // Clear tokens list
             selectedTokens.Clear();
+        }   
+    }
+
+    public void DragSelectedTokens()
+    {
+        // Add each selected token for transport
+        foreach (var token in selectedTokens)
+        {
+            // Trigger event
+            TokenEvents.instance.TriggerOnDrag(token);
         }
-        
+    }
+
+    public int GetSize()
+    {
+        return tokens.Count;
     }
 }
