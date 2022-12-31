@@ -2,26 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ActivePeriod { Day, Night, Both };
+public enum CardType { Character, Building, Item, Objective }
 
 [CreateAssetMenu]
 public class Card : ScriptableObject
 {
-    [Header("Explicit Values")]
-    public int lifetime; // If == -1, then indefinite
-    public ActivePeriod activePeriod;
-    public Cost cost;
-    public int usesLeft; // If == -1, then indefinite
-
-    [Header("Implicit Values")]
-    public bool isActive;
-
-    [Header("Visuals")]
+    [Header("Basics")]
     public new string name;
+    public CardType cardType;
+    public float lifetime;
+    public float useTime;
+    public int numUses; // -1 => inf
+
+    [Header("Effect Details")]
     public string effectDescription;
+    public Cost cost;
+
+    [Header("Visuals?")]
     public Sprite sprite;
 
-    [Header("Tokens")]
+    [Header("Token Stacks")]
     public TokenStack inputStack;
     public TokenStack outputStack;
 
@@ -89,12 +89,12 @@ public class Card : ScriptableObject
         // Create output
 
         // Check if you have any uses left
-        if (usesLeft > 0)
+        if (numUses > 0)
         {
             // Decrement
-            usesLeft--;
+            numUses--;
 
-            if (usesLeft == 0)
+            if (numUses == 0)
             {
                 // Destroy this
             }

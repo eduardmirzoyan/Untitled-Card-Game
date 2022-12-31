@@ -105,8 +105,9 @@ public class CardHandler : MonoBehaviour
 
     private void CheckForSlot()
     {
-        // Raycast down from the mouse
-        var hit = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hitInfo, 10f, layerMask);
+        // Create a ray from mouse position towards the board
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var hit = Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, layerMask);
 
         // Check to see if you hit a card slot
         if (hit)

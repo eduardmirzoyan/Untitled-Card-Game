@@ -6,13 +6,13 @@ public class TransferHandler : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private List<TokenHandler> tokenHandlers;
-    [SerializeField] private List<ResourceToken> selectedTokens;
 
     [Header("Settings")]
     [SerializeField] private float pickUpHeight = 0.5f;
     [SerializeField] private LayerMask layerMask;
 
     private StackHandler stackHandler;
+    private bool isPickedUp;
 
     public static TransferHandler instance;
     private void Awake()
@@ -28,132 +28,67 @@ public class TransferHandler : MonoBehaviour
 
         // Init lists
         tokenHandlers = new List<TokenHandler>();
-        selectedTokens = new List<ResourceToken>();
     }
 
-    private void Start()
+    public void SelectToken(TokenHandler tokenHandler)
     {
-        TokenEvents.instance.onHover += SelectToken;
-        TokenEvents.instance.onBlur += DeselectTokens;
-    }
+        // Don't do anything if picked up
+        if (isPickedUp) return;
 
-    private void OnDestroy()
-    {
-        TokenEvents.instance.onHover -= SelectToken;
-        TokenEvents.instance.onBlur -= DeselectTokens;
-    }
-
-    private void SelectToken(ResourceToken token, bool state)
-    {
-        if (state)
-        {
-            // Add token to stack
-            selectedTokens.Add(token);
-        }
-        else
-        {
-            // Remove the token
-            selectedTokens.Remove(token);
-        }
-    }
-
-    private void DeselectTokens(ResourceToken token)
-    {
-        // Clear selected tokens
-        selectedTokens.Clear();
-    }
-
-    private void Update()
-    {
-        // If you have any tokens, then start following mouse and looking for stacks
-        if (tokenHandlers.Count > 0)
-        {
-            // Follow the player's mouse
-            FollowMouse();
-
-            // Search for stacks
-            SearchForStack();
-        }
-    }
-
-    private void SearchForStack()
-    {
-        // Raycast down from the mouse
-        var hit = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hitInfo, 10f, layerMask);
-
-        // Check to see if you hit a card slot
-        if (hit)
-        {
-            if (hitInfo.collider.transform.parent.TryGetComponent(out StackHandler stackHandler))
-            {
-                // Do nothing if same
-                if (this.stackHandler == stackHandler) return;
-
-                // Else check all 4 possibilities
-                if (this.stackHandler != null && stackHandler != null)
-                {
-                    // Disable old
-                    TokenEvents.instance.TriggerOnDrop(this.stackHandler.GetTokenStack(), false);
-
-                    // Enable new
-                    TokenEvents.instance.TriggerOnDrop(stackHandler.GetTokenStack(), true);
-                }
-                else if (this.stackHandler == null && stackHandler != null)
-                {
-                    // Enable new
-                    TokenEvents.instance.TriggerOnDrop(stackHandler.GetTokenStack(), true);
-                }
-                else if (this.stackHandler != null && stackHandler == null)
-                {
-                    // Disable old
-                    TokenEvents.instance.TriggerOnDrop(this.stackHandler.GetTokenStack(), false);
-                }
-                else if (this.stackHandler == null && stackHandler == null)
-                {
-                    // Nothing lol
-                }
-
-                // Update stack
-                this.stackHandler = stackHandler;
-            }
-        }
-    }
-
-    public void PickupTransport(TokenHandler tokenHandler)
-    {
-        // Disable grav
-        tokenHandler.ToggleGravity(false);
-
-        // Set the parent to this
-        tokenHandler.transform.parent = transform;
-
-        // Calculate position
-        float thickness = 0.1f;
-        tokenHandler.transform.localPosition = Vector3.up * tokenHandlers.Count * thickness;
-
-        // Save
+        // Add token to list to move
         tokenHandlers.Add(tokenHandler);
     }
 
-    public void GatherTransport()
+    public void DeselectToken(TokenHandler tokenHandler)
     {
-        // Add selected tokens into the transport
-        foreach (var token in selectedTokens)
-        {
-            // Trigger event
-            TokenEvents.instance.TriggerOnDrag(token);
-        }
+        // Don't do anything if picked up
+        if (isPickedUp) return;
+
+        // Remove the token
+        tokenHandlers.Remove(tokenHandler);
     }
 
-    public void DropTransport()
+    public void ClearAllTokens()
     {
+        // Clear selected tokens
+        tokenHandlers.Clear();
+    }
+
+    public void PickupTokens()
+    {
+        print("PICKED UP!");
+
+        for (int i = 0; i < tokenHandlers.Count; i++)
+        {
+            // Disable gravity
+            tokenHandlers[i].SetFreeze(false);
+
+            // Set the parent to this
+            tokenHandlers[i].transform.parent = transform;
+
+            // Calculate position
+            float thickness = 0.1f;
+            tokenHandlers[i].transform.localPosition = Vector3.up * i * thickness;
+        }
+        
+        // Set current stack to null
+        stackHandler = null;
+
+        // Set state
+        isPickedUp = true;
+    }
+
+    public void DropTokens()
+    {
+        print("DROPPED!");
+
         // Make sure a handler was found
         if (this.stackHandler != null)
         {
             foreach (var tokenHandler in tokenHandlers)
             {
                 // Enable grav
-                tokenHandler.ToggleGravity(true);
+                tokenHandler.SetFreeze(true);
 
                 // Move each token to stack
                 tokenHandler.MoveToStack(stackHandler);
@@ -165,7 +100,7 @@ public class TransferHandler : MonoBehaviour
             foreach (var tokenHandler in tokenHandlers)
             {
                 // Enable grav
-                tokenHandler.ToggleGravity(true);
+                tokenHandler.SetFreeze(true);
 
                 // Return
                 tokenHandler.ReturnToStack();
@@ -175,8 +110,68 @@ public class TransferHandler : MonoBehaviour
         // Now clear all handlers
         tokenHandlers.Clear();
 
-        // Reset
+        // Reset stack
         stackHandler = null;
+
+        // Set state
+        isPickedUp = false;
+    }
+
+    private void Update()
+    {
+        // If you have any tokens, then start following mouse and looking for stacks
+        if (isPickedUp)
+        {
+            // Follow the player's mouse
+            FollowMouse();
+
+            // Search for stacks
+            SearchForStack();
+        }
+    }
+
+    private void SearchForStack()
+    {
+        // Create a ray from mouse position towards the board
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var hit = Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, layerMask);
+
+        // Check to see if you hit a new stack
+        if (hit && hitInfo.collider.transform.parent.TryGetComponent(out StackHandler stackHandler))
+        {
+            // If same, then dip
+            if (this.stackHandler == stackHandler) return;
+
+            // If a a previous stack exists
+            if (this.stackHandler != null)
+            {
+                // Disable its highlight
+                this.stackHandler.DisableHighlight();
+            }
+            // No previous stack
+            else 
+            {
+                // Do nothing
+            }
+
+            // Enable new highlight
+            stackHandler.EnableHighlight();
+
+            // Save handler
+            this.stackHandler = stackHandler;
+        }
+        // No new stack, so clear handler if possible
+        else { 
+            // If you previously had one
+            if (this.stackHandler != null)
+            {
+                // Disable its highlight
+                this.stackHandler.DisableHighlight();
+
+                // Set it to null
+                this.stackHandler = null;
+            }
+        }
     }
 
     private void FollowMouse()
@@ -189,6 +184,7 @@ public class TransferHandler : MonoBehaviour
 
         if (plane.Raycast(ray, out float distance)) // the distance from the ray origin to the ray intersection of the plane
         {
+            // Translate this object
             transform.position = ray.GetPoint(distance); // distance along the ray
         }
     }

@@ -179,5 +179,6 @@ MonoBehaviour:
   tokenDropPosition: {fileID: 7709727434175893153}
   meshRenderer: {fileID: 2759008840224264881}
   stack: {fileID: 0}
+  tokenSpacing: 0.15
   debugMode: 1
   debugRadius: 0.05

@@ -8,7 +8,6 @@ public class TokenStack : ScriptableObject
 {
     public int stackLimit = 5;
     public List<ResourceToken> tokens;
-    public List<ResourceToken> selectedTokens;
 
     public void Initialize(int stackLimit = 5)
     {
@@ -16,9 +15,6 @@ public class TokenStack : ScriptableObject
 
         // Initialize stack
         tokens = new List<ResourceToken>();
-
-        // Initialize list
-        selectedTokens = new List<ResourceToken>();
     }
 
     public void PushToken(ResourceToken token)
@@ -82,55 +78,6 @@ public class TokenStack : ScriptableObject
         return result;
     }
 
-    public void SelectToken(ResourceToken selectedToken, bool state)
-    {
-        // Check if you are selecting
-        if (state)
-        {
-            // Init flag
-            bool tokenFound = false;
-
-            // Check if token exists
-            foreach (var token in tokens)
-            {
-                // If token was already found or is now found
-                if (tokenFound || token == selectedToken)
-                {
-                    // Add to selected
-                    selectedTokens.Add(token);
-
-                    // Trigger event
-                    TokenEvents.instance.TriggerOnHover(token, true);
-
-                    // Trigger flag
-                    tokenFound = true;
-                }
-            }
-        }
-        // Or deselecting
-        else
-        {
-            // Clear all selected tokens 
-            foreach (var token in selectedTokens)
-            {
-                // Trigger event
-                TokenEvents.instance.TriggerOnHover(token, false);
-            }
-
-            // Clear tokens list
-            selectedTokens.Clear();
-        }   
-    }
-
-    public void DragSelectedTokens()
-    {
-        // Add each selected token for transport
-        foreach (var token in selectedTokens)
-        {
-            // Trigger event
-            TokenEvents.instance.TriggerOnDrag(token);
-        }
-    }
 
     public int GetSize()
     {

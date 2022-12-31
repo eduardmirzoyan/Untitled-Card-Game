@@ -17,28 +17,30 @@ public class ResourceToken : ScriptableObject
         this.stack = stack;
     }
 
-    public void SelectToken(bool state)
+    public void SelectToken()
     {
-        // ?
-        stack.SelectToken(this, state);
+        // Get list of tokens starting from this
+        var selectedTokens = stack.GetTokensUntilTop(this);
+        foreach (var token in selectedTokens)
+        {
+            // Trigger event
+            TokenEvents.instance.TriggerOnHover(token);
+        }
     }
 
-    public List<ResourceToken> GetTokensUntilTop()
+    public void DeselectToken()
     {
-        return null;
-    }
-
-    public void DragTokens()
-    {
-        stack.DragSelectedTokens();
+        // Deselect all tokens in stack
+        foreach (var token in stack.tokens)
+        {
+            // Trigger event
+            TokenEvents.instance.TriggerOnBlur(token);
+        }
     }
 
     public bool MoveTo(TokenStack newStack)
     {
         var oldStack = this.stack;
-
-        // Debug
-        Debug.Log(ToString() + " was moved to " + newStack.name);
 
         // Check if previous stack exists
         if (oldStack != null)
@@ -52,6 +54,9 @@ public class ResourceToken : ScriptableObject
 
         // Update card slot
         this.stack = newStack;
+
+        // Debug
+        Debug.Log(this.ToString() + " was moved.");
         
         // Return result
         return true;
@@ -67,6 +72,6 @@ public class ResourceToken : ScriptableObject
 
     public override string ToString()
     {
-        return tokenType.ToString() + " " + GetInstanceID();
+        return tokenType.ToString() + " [" + this.GetInstanceID() + "]";
     }
 }

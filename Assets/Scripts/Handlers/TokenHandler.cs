@@ -11,6 +11,7 @@ public class TokenHandler : MonoBehaviour
     [SerializeField] private Outline outline;
     [SerializeField] private Rigidbody body;
     [SerializeField] private MeshRenderer meshRenderer;
+    [SerializeField] private Collider hitbox;
 
     [Header("Data")]
     [SerializeField] private ResourceToken token;
@@ -29,11 +30,7 @@ public class TokenHandler : MonoBehaviour
     {
         // Sub
         TokenEvents.instance.onHover += OnHover;
-        TokenEvents.instance.onDrag += OnDrag;
-        TokenEvents.instance.onDrop += OnDrop;
         TokenEvents.instance.onBlur += OnBlur;
-
-
         TokenEvents.instance.onDestroy += DestroyToken;
     }
 
@@ -41,10 +38,7 @@ public class TokenHandler : MonoBehaviour
     {
         // Unsub
         TokenEvents.instance.onHover -= OnHover;
-        TokenEvents.instance.onDrag -= OnDrag;
-        TokenEvents.instance.onDrop -= OnDrop;
         TokenEvents.instance.onBlur -= OnBlur;
-
         TokenEvents.instance.onDestroy -= DestroyToken;
     }
 
@@ -66,41 +60,22 @@ public class TokenHandler : MonoBehaviour
         name = this.ToString();
     }
 
-    private void OnBlur(ResourceToken token)
-    {
-        if (this.token != token) return;
-
-        // TODO
-    }
-
-    private void OnDrop(TokenStack stack, bool state)
-    {
-        // if (this.token != token) return;
-
-        // TODO
-    }
-
     private void OnMouseEnter()
     {
         // Select token
-        token.SelectToken(true);
+        token.SelectToken();
     }
 
     private void OnMouseExit()
     {
         // Deselect token
-        token.SelectToken(false);
+        token.DeselectToken();
     }
 
     private void OnMouseDown()
     {
-        // This is the controller -> logic
-
-        // ?
-        TransferHandler.instance.GatherTransport(); // ?
-
-        // Drag tokens
-        token.DragTokens();
+        // Pick up all selected tokens
+        TransferHandler.instance.PickupTokens();
     }
 
     private void OnMouseDrag()
@@ -110,11 +85,8 @@ public class TokenHandler : MonoBehaviour
 
     private void OnMouseUp()
     {
-        // Stop selecting
-        token.SelectToken(false);
-
-        // Drop transport
-        TransferHandler.instance.DropTransport();
+        // Drop all selected tokens
+        TransferHandler.instance.DropTokens();
     }
 
     private void OnMouseOver()
@@ -133,104 +105,28 @@ public class TokenHandler : MonoBehaviour
         }
     }
 
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    private void OnHover(ResourceToken token, bool state)
+    private void OnHover(ResourceToken token)
     {
         // Make sure it's this token
         if (this.token != token) return;
 
-        if (state)
-        {
-            // Highlight this token
-            EnableOutline();
-        }
-        else
-        {
-            // Remove highlight
-            DisableOutline();
-        }
+        // Highlight this token
+        EnableOutline();
+
+        // Select this token
+        TransferHandler.instance.SelectToken(this);
     }
 
-    private void OnDrag(ResourceToken token)
+    private void OnBlur(ResourceToken token)
     {
-        // This acts as the logic -> visual
-
         // Make sure it's this token
         if (this.token != token) return;
-        
-        // Add to transport
-        TransferHandler.instance.PickupTransport(this);
-    }
 
-    private void FollowMouse()
-    {
-        // Create ground plane
-        Plane plane = new Plane(Vector3.up, Vector3.up * pickUpHeight);
+        // Remove highlight
+        DisableOutline();
 
-        // Create a ray from mouse position
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (plane.Raycast(ray, out float distance)) // the distance from the ray origin to the ray intersection of the plane
-        {
-            transform.position = ray.GetPoint(distance); // distance along the ray
-        }
-    }
-
-    private void SearchForStack()
-    {
-        // Raycast down from the mouse
-        var hit = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hitInfo, 10f, layerMask);
-
-        // Check to see if you hit a card slot
-        if (hit)
-        {
-            if (hitInfo.collider.transform.parent.TryGetComponent(out StackHandler stackHandler))
-            {
-                // Do nothing if same
-                if (this.stackHandler == stackHandler) return;
-
-                // Else check all 4 possibilities
-                if (this.stackHandler != null && stackHandler != null)
-                {
-                    // Disable old
-                    TokenEvents.instance.TriggerOnDrop(this.stackHandler.GetTokenStack(), false);
-
-                    // Enable new
-                    TokenEvents.instance.TriggerOnDrop(stackHandler.GetTokenStack(), true);
-                }
-                else if (this.stackHandler == null && stackHandler != null)
-                {
-                    // Enable new
-                    TokenEvents.instance.TriggerOnDrop(stackHandler.GetTokenStack(), true);
-                }
-                else if (this.stackHandler != null && stackHandler == null)
-                {
-                    // Disable old
-                    TokenEvents.instance.TriggerOnDrop(this.stackHandler.GetTokenStack(), false);
-                }
-                else if (this.stackHandler == null && stackHandler == null)
-                {
-                    // Nothing lol
-                }
-
-                // Update stack
-                this.stackHandler = stackHandler;
-            }
-        }
-    }
-
-    private void MoveToken()
-    {
-        if (this.stackHandler != null)
-        {
-            // Debug
-            print(stackHandler.ToString());
-
-            // Move
-            MoveToStack(this.stackHandler);
-        }
+        // Deselect this token
+        TransferHandler.instance.DeselectToken(this);
     }
 
     private void DestroyToken(ResourceToken token)
@@ -263,9 +159,6 @@ public class TokenHandler : MonoBehaviour
         // Check if move was sucessful
         if (moved)
         {
-            // Debug
-            print(ToString() + " Relocated to " + stackHandler.ToString());
-
             // Relocation token
             Relocate(stackHandler);
         }
@@ -287,9 +180,10 @@ public class TokenHandler : MonoBehaviour
         outline.eraseRenderer = true;
     }
 
-    public void ToggleGravity(bool state)
+    public void SetFreeze(bool state)
     {
         body.useGravity = state;
+        hitbox.enabled = state;
     }
 
     public override string ToString()

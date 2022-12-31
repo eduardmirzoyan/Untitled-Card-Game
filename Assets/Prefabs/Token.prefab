@@ -180,6 +180,7 @@ MonoBehaviour:
   outline: {fileID: 2384122680621142579}
   body: {fileID: 19566318085068045}
   meshRenderer: {fileID: 19566317043423215}
+  hitbox: {fileID: 19566317043423201}
   token: {fileID: 0}
   pickUpHeight: 0.5
   layerMask:

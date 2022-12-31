@@ -20,11 +20,8 @@ public class TokenEvents : MonoBehaviour
 
     public event Action<ResourceToken, TokenStack> onCreate;
 
-    public event Action<ResourceToken, bool> onHover;
-    public event Action<ResourceToken> onDrag;
-    public event Action<TokenStack, bool> onDrop;
+    public event Action<ResourceToken> onHover;
     public event Action<ResourceToken> onBlur;
-
 
     public event Action<ResourceToken> onDestroy;
 
@@ -36,27 +33,11 @@ public class TokenEvents : MonoBehaviour
         }
     }
 
-    public void TriggerOnHover(ResourceToken token, bool state)
+    public void TriggerOnHover(ResourceToken token)
     {
         if (onHover != null)
         {
-            onHover(token, state);
-        }
-    }
-
-    public void TriggerOnDrag(ResourceToken token)
-    {
-        if (onDrag != null)
-        {
-            onDrag(token);
-        }
-    }
-
-    public void TriggerOnDrop(TokenStack stack, bool state)
-    {
-        if (onDrop != null)
-        {
-            onDrop(stack, state);
+            onHover(token);
         }
     }
 

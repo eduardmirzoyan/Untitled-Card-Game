@@ -12,6 +12,9 @@ public class StackHandler : MonoBehaviour
     [Header("Data")]
     [SerializeField] private TokenStack stack;
 
+    [Header("Settings")]
+    [SerializeField] private float tokenSpacing = 0.2f;
+
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
     [SerializeField] private float debugRadius = 0.1f;
@@ -20,14 +23,12 @@ public class StackHandler : MonoBehaviour
     {
         // Sub
         TokenEvents.instance.onCreate += CreateToken;
-        TokenEvents.instance.onDrop += ToggleHighlight;
     }
 
     private void OnDestroy()
     {
         // Unsub
         TokenEvents.instance.onCreate -= CreateToken;
-        TokenEvents.instance.onDrop -= ToggleHighlight;
     }
 
     public void Initialize(TokenStack stack)
@@ -41,10 +42,8 @@ public class StackHandler : MonoBehaviour
     {
         if (stack == null) return tokenDropPosition.position;
 
-        float tokenThickness = 0.1f;
-
         // Calculate position to add token based on stack
-        return tokenDropPosition.position + Vector3.up * tokenThickness * stack.GetSize();
+        return tokenDropPosition.position + Vector3.up * tokenSpacing * stack.GetSize();
     }
 
     private void CreateToken(ResourceToken token, TokenStack stack)
@@ -58,30 +57,13 @@ public class StackHandler : MonoBehaviour
         tokenHandler.Initialize(token, this);
     }
 
-    private void ToggleHighlight(TokenStack stack, bool state)
-    {
-        // Make sure it's this slot
-        if (this.stack != stack) return;
-
-        if (state)
-        {
-            // Highlight this slot
-            EnableHighlight();
-        }
-        else
-        {
-            // Remove highlight
-            DisableHighlight();
-        }
-    }
-
-    private void EnableHighlight()
+    public void EnableHighlight()
     {
         // Show mesh
         meshRenderer.enabled = true;
     }
 
-    private void DisableHighlight()
+    public void DisableHighlight()
     {
         // Hide mesh
         meshRenderer.enabled = false;
