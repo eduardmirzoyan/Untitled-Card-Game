@@ -43,7 +43,7 @@ public class TokenStack : ScriptableObject
         return tokens.Count >= stackLimit;
     }
 
-    public void ClearStack()
+    public void DestroyStack()
     {
         // Remove all tokens
         while (tokens.Count > 0)

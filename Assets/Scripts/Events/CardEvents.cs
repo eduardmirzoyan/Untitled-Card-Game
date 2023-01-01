@@ -24,6 +24,10 @@ public class CardEvents : MonoBehaviour
     public event Action<Card, CardSlot, CardSlot> onMove;
     public event Action<Card> onDestroy;
 
+    public event Action<Card> onTickLife;
+    public event Action<Card> onTickUse;
+    public event Action<Card> onUseEffect;
+
     public void TriggerOnCreate(Card card)
     {
         if (onCreate != null)
@@ -61,6 +65,30 @@ public class CardEvents : MonoBehaviour
         if (onDestroy != null)
         {
             onDestroy(card);
+        }
+    }
+
+    public void TriggerOnTickLife(Card card)
+    {
+        if (onTickLife != null)
+        {
+            onTickLife(card);
+        }
+    }
+
+    public void TriggerOnTickUse(Card card)
+    {
+        if (onTickUse != null)
+        {
+            onTickUse(card);
+        }
+    }
+
+    public void TriggerOnUseEffect(Card card)
+    {
+        if (onUseEffect != null)
+        {
+            onUseEffect(card);
         }
     }
 }

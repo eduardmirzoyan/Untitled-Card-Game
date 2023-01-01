@@ -16,6 +16,21 @@ public class GameHandler : MonoBehaviour
     [SerializeField] private List<Card> debugCards;
     [SerializeField] private List<ResourceToken> debugTokens;
 
+    public bool isPaused;
+
+    public static GameHandler instance;
+    private void Awake()
+    {
+        // Singleton Logic
+        if (GameHandler.instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+    }
+
     private void Start()
     {
         StartCoroutine(StartGame());
@@ -42,6 +57,11 @@ public class GameHandler : MonoBehaviour
 
                 // Create the token on the board
                 game.board.CreateToken(randomToken);
+            }
+            else if (Input.GetKeyDown(KeyCode.H))
+            {
+                // Toggle pause
+                isPaused = !isPaused;
             }
         }
     }

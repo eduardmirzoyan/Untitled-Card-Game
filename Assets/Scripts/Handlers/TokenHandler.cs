@@ -12,6 +12,7 @@ public class TokenHandler : MonoBehaviour
     [SerializeField] private Rigidbody body;
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private Collider hitbox;
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     [Header("Data")]
     [SerializeField] private ResourceToken token;
@@ -23,6 +24,7 @@ public class TokenHandler : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
     [SerializeField] private TextMeshProUGUI debugText;
+    [SerializeField] private bool randomColor;
 
     private StackHandler stackHandler;
 
@@ -47,14 +49,20 @@ public class TokenHandler : MonoBehaviour
         this.token = token;
         this.stackHandler = stackHandler;
 
+        // Set Icon
+        spriteRenderer.sprite = token.sprite;
+
+        // Set color
+        if (randomColor)
+            meshRenderer.material.color = UnityEngine.Random.ColorHSV();
+        else
+            meshRenderer.material.color = token.color;
+
         // Disable outline
         DisableOutline();
 
         // Set home
         Relocate(stackHandler);
-
-        // Generate random color
-        meshRenderer.material.color = UnityEngine.Random.ColorHSV();
 
         // Update name
         name = this.ToString();
@@ -180,7 +188,7 @@ public class TokenHandler : MonoBehaviour
         outline.eraseRenderer = true;
     }
 
-    public void SetFreeze(bool state)
+    public void EnablePhysics(bool state)
     {
         body.useGravity = state;
         hitbox.enabled = state;
@@ -201,6 +209,7 @@ public class TokenHandler : MonoBehaviour
 
         // Set debug text
 
-        debugText.text = token.ToString();
+        if (token != null)
+            debugText.text = token.ToString();
     }
 }

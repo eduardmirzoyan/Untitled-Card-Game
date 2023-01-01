@@ -10,6 +10,8 @@ public class ResourceToken : ScriptableObject
     public new string name;
     public TokenType tokenType;
     public TokenStack stack;
+    public Sprite sprite;
+    public Color color;
 
     public void Initialize(TokenType tokenType, TokenStack stack)
     {

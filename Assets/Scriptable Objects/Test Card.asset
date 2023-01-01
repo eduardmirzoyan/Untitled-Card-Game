@@ -12,14 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baebf4b0053dbce4d89b12057067da07, type: 3}
   m_Name: Test Card
   m_EditorClassIdentifier: 
-  lifetime: 0
-  activePeriod: 0
-  cost: {fileID: 0}
-  usesLeft: 0
-  isActive: 0
   name: Test Card
+  cardType: 0
+  lifetime: 5
+  usetime: 3
+  numUses: 0
   effectDescription: 
+  cost: {fileID: 0}
   sprite: {fileID: 0}
   inputStack: {fileID: 0}
   outputStack: {fileID: 0}
   cardSlot: {fileID: 0}
+  lifeCounter: 0
+  useCounter: 0

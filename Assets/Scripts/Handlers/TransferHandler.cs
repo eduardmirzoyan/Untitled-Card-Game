@@ -56,12 +56,13 @@ public class TransferHandler : MonoBehaviour
 
     public void PickupTokens()
     {
-        print("PICKED UP!");
+        // // Debug
+        // print("PICKED UP!");
 
         for (int i = 0; i < tokenHandlers.Count; i++)
         {
             // Disable gravity
-            tokenHandlers[i].SetFreeze(false);
+            tokenHandlers[i].EnablePhysics(false);
 
             // Set the parent to this
             tokenHandlers[i].transform.parent = transform;
@@ -80,7 +81,8 @@ public class TransferHandler : MonoBehaviour
 
     public void DropTokens()
     {
-        print("DROPPED!");
+        // // Debug
+        // print("DROPPED!");
 
         // Make sure a handler was found
         if (this.stackHandler != null)
@@ -88,7 +90,7 @@ public class TransferHandler : MonoBehaviour
             foreach (var tokenHandler in tokenHandlers)
             {
                 // Enable grav
-                tokenHandler.SetFreeze(true);
+                tokenHandler.EnablePhysics(true);
 
                 // Move each token to stack
                 tokenHandler.MoveToStack(stackHandler);
@@ -100,7 +102,7 @@ public class TransferHandler : MonoBehaviour
             foreach (var tokenHandler in tokenHandlers)
             {
                 // Enable grav
-                tokenHandler.SetFreeze(true);
+                tokenHandler.EnablePhysics(true);
 
                 // Return
                 tokenHandler.ReturnToStack();

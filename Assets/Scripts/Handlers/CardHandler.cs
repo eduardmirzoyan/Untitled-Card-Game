@@ -2,17 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using cakeslice;
+using TMPro;
+using UnityEngine.UI;
 
 public class CardHandler : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private StackHandler inputStack;
     [SerializeField] private StackHandler outputStack;
-    [SerializeField] private Vector3 homePosition;
-    [SerializeField] private Outline outline;
+    [SerializeField] private cakeslice.Outline outline;
+    [SerializeField] private Rigidbody body;
+    [SerializeField] private Collider hitbox;
+    [SerializeField] private TextMeshPro topText;
+    [SerializeField] private TextMeshPro middleText;
+    [SerializeField] private TextMeshPro bottomText;
+    [SerializeField] private Canvas canvas;
+    [SerializeField] private TimersUI timersUI;
 
     [Header("Data")]
     [SerializeField] private Card card;
+    [SerializeField] private Vector3 homePosition;
+    [SerializeField] private bool isInteractable = true;
 
     [Header("Settings")]
     [SerializeField] private float pickUpHeight = 0.5f;
@@ -40,6 +50,9 @@ public class CardHandler : MonoBehaviour
         this.card = card;
         transform.position = homeTransform.position;
 
+        // Initialize visuals
+        middleText.text = card.name;
+
         // Disable outline
         DisableOutline();
 
@@ -50,12 +63,29 @@ public class CardHandler : MonoBehaviour
         inputStack.Initialize(card.inputStack);
         outputStack.Initialize(card.outputStack);
 
+        // Init timers
+        timersUI.Initialize(card);
+
         // Update name
         name = this.ToString();
     }
 
+    private void Update()
+    {
+        // If paused, then don't tick
+        if (GameHandler.instance.isPaused) return;
+
+        if (card != null)
+        {
+            // Tick timer every frame
+            card.TickTimers();
+        }
+    }
+
     private void OnMouseEnter()
     {
+        if (!isInteractable) return;
+
         EnableOutline();
 
         // Trigger event
@@ -64,6 +94,8 @@ public class CardHandler : MonoBehaviour
 
     private void OnMouseExit()
     {
+        if (!isInteractable) return;
+
         DisableOutline();
 
         // Trigger event
@@ -72,6 +104,8 @@ public class CardHandler : MonoBehaviour
 
     private void OnMouseDrag()
     {
+        if (!isInteractable) return;
+
         // Follow the mouse while slighly hovering over the board
         FollowMouse();
 
@@ -81,11 +115,28 @@ public class CardHandler : MonoBehaviour
 
     private void OnMouseUp()
     {
+        if (!isInteractable) return;
+
         // Move to the new position you are hovering
         MoveCard();
 
         // Return card to home position
         transform.position = homePosition;
+    }
+
+    private void OnMouseOver()
+    {
+        if (!isInteractable) return;
+
+        // Check for Right Click
+        if (Input.GetMouseButtonDown(1))
+        {
+            // Debug
+            // print("Right clicked on Card: " + card.ToString());
+
+            // Inspect this card
+            CardInspector.instance.Inspect(this);
+        }
     }
 
     private void FollowMouse()
@@ -195,6 +246,21 @@ public class CardHandler : MonoBehaviour
 
         // Move to home
         transform.position = homePosition;
+    }
+
+    public void EnablePhysics(bool state)
+    {
+        // Toggle physics
+        body.useGravity = state;
+
+        // Toggle collisions
+        hitbox.enabled = state;
+
+        // Toggle interactibility
+        isInteractable = state;
+
+        // Toggle UI
+        canvas.enabled = state;
     }
 
     private void EnableOutline()
