@@ -40,8 +40,10 @@
      <Compile Include="Assets\Scripts\Handlers\StackHandler.cs" />
      <Compile Include="Assets\Scripts\TokenStack.cs" />
      <Compile Include="Assets\Scripts\Handlers\BoardHandler.cs" />
+     <Compile Include="Assets\Scripts\Misc\CameraHandler.cs" />
      <Compile Include="Assets\Scripts\Handlers\GameHandler.cs" />
      <Compile Include="Assets\Scripts\ResourceToken.cs" />
+     <Compile Include="Assets\Scripts\TokenTable.cs" />
      <Compile Include="Assets\Scripts\Handlers\CardSlotHandler.cs" />
      <Compile Include="Assets\Scripts\Events\CardEvents.cs" />
      <Compile Include="Assets\Scripts\Misc\CardInspector.cs" />
@@ -58,8 +60,6 @@
      <Compile Include="Assets\Scripts\Game.cs" />
      <Compile Include="Assets\Scripts\Handlers\TransferHandler.cs" />
      <Compile Include="Assets\Scripts\Events\TokenEvents.cs" />
-     <Compile Include="Assets\Scripts\TokenTable.cs" />
-     <Compile Include="Assets\Scripts\Misc\CameraHandler.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />

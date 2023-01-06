@@ -13,6 +13,7 @@ public class TokenHandler : MonoBehaviour
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private Collider hitbox;
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private Transform bodyTransform;
 
     [Header("Data")]
     [SerializeField] private ResourceToken token;
@@ -20,8 +21,7 @@ public class TokenHandler : MonoBehaviour
     [SerializeField] private Color[] tokenColors;
 
     [Header("Settings")]
-    [SerializeField] private float pickUpHeight = 0.5f;
-    [SerializeField] private LayerMask layerMask;
+    [SerializeField] private Vector2 tokenSize;
 
     [Header("Debugging")]
     [SerializeField] private bool debugMode;

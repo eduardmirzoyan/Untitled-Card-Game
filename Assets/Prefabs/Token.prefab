@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 19566317043423210}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.05, z: 0.5}
+  m_LocalScale: {x: 0.65, y: 0.05, z: 0.65}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 19566318085068042}
@@ -183,6 +183,7 @@ MonoBehaviour:
   meshRenderer: {fileID: 19566317043423215}
   hitbox: {fileID: 19566317043423201}
   spriteRenderer: {fileID: 8414347385414807695}
+  bodyTransform: {fileID: 0}
   token: {fileID: 0}
   tokenSprites:
   - {fileID: 21300000, guid: b0d52d8a9705e9f4783af11271e05b77, type: 3}
@@ -198,10 +199,7 @@ MonoBehaviour:
   - {r: 0, g: 0.54319143, b: 0.764151, a: 1}
   - {r: 0.93143594, g: 0.9433962, b: 0, a: 1}
   - {r: 0.7735849, g: 0.025542913, b: 0.025542913, a: 1}
-  pickUpHeight: 0.5
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 512
+  tokenSize: {x: 0, y: 0}
   debugMode: 1
   debugText: {fileID: 1455600218079816884}
   randomColor: 0

@@ -1452,6 +1452,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60fb5d2aa6d9a014fb8a3ad9e65e548a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 0}
+  panSpeed: 40
+  zoomSpeed: 10
+  panBorderThickness: 10
+  panLimit: {x: 50, y: 50}
+  scrollSpeed: 20
+  minY: 20
+  maxY: 120
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
