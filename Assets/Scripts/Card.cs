@@ -2,21 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CardType { Character, Building, Item, Objective }
+public enum CardType { Event, Character, Building, Item, Objective }
 
 [CreateAssetMenu]
 public class Card : ScriptableObject
 {
     [Header("Basics")]
     public new string name;
+    public string flavorText;
     public CardType cardType;
-    public float lifetime;
+    public float lifetime = 30f;
     public float usetime;
-    public int numUses; // -1 => inf
+    public int numUses = 1; // -1 => inf
 
     [Header("Effect Details")]
     public string effectDescription;
     public Cost cost;
+    public Reward reward;
 
     [Header("Visuals?")]
     public Sprite sprite;
@@ -32,20 +34,27 @@ public class Card : ScriptableObject
     public float lifeCounter;
     public float useCounter;
 
-    public void Initialize(CardSlot cardSlot = null)
+    public void Create(CardSlot cardSlot)
     {
         this.cardSlot = cardSlot;
+        cardSlot.card = this;
 
-        // Initalize stacks
+        // Initialize stacks
         inputStack = ScriptableObject.CreateInstance<TokenStack>();
         inputStack.Initialize();
 
         outputStack = ScriptableObject.CreateInstance<TokenStack>();
         outputStack.Initialize();
 
-        // Intialize timers
+        // Initialize timers
         lifeCounter = lifetime;
         useCounter = usetime;
+
+        // Debug
+        Debug.Log("Created: " + this.ToString());
+
+        // Trigger event
+        CardEvents.instance.TriggerOnCreate(this, cardSlot);
     }
 
     public bool MoveTo(CardSlot newSlot)
@@ -59,11 +68,11 @@ public class Card : ScriptableObject
         if (oldSlot != null)
         {
             // Make empty
-            oldSlot.SetCard(null);
+            oldSlot.card = null;
         }
 
         // Set new slot
-        newSlot.SetCard(this);
+        newSlot.card = this;
 
         // Update card slot
         this.cardSlot = newSlot;
@@ -74,28 +83,38 @@ public class Card : ScriptableObject
         return true;
     }
 
-    public bool SatisfiesCost()
+    public void Destroy()
     {
-        // TODO
-        return false;
+        // Remove from stack
+        cardSlot.card = null;
+
+        // Set cardslot to null
+        cardSlot = null;
+
+        // Trigger event
+        CardEvents.instance.TriggerOnDestroy(this);
     }
 
     public void TickTimers()
     {
-        // Check for effect timer first
-        if (useCounter > 0)
+        // Check if cost is satified
+        if (CostSatified())
         {
-            // Decrement time
-            useCounter -= Time.deltaTime;
-
-            // Trigger event
-            CardEvents.instance.TriggerOnTickUse(this);
-
-            // If timer reaches 0
-            if (useCounter <= 0)
+            // If there is use time, then tick
+            if (useCounter > 0)
             {
-                // Activate effect
-                ActivateEffect();
+                // Decrement time
+                useCounter -= Time.deltaTime;
+
+                // Trigger event
+                CardEvents.instance.TriggerOnTickUse(this);
+
+                // If timer reaches 0
+                if (useCounter <= 0)
+                {
+                    // Activate effect
+                    Trigger();
+                }
             }
         }
         // Else tick down lifetime
@@ -116,29 +135,53 @@ public class Card : ScriptableObject
         }
     }
 
-    public bool CheckRequirements()
+    public void ResetLifetime()
     {
-        // TODO
-        return true;
-    }
-
-    public virtual void ActivateEffect()
-    {
-        // Destroy all input tokens
-        inputStack.DestroyStack();
-
-        // Perform the actual effect here
-        // TODO
-
-        // Create output
-        // TODO
-
-        // Reset timer
-        // TODO
+        // Reset counter
+        lifeCounter = lifetime;
 
         // Trigger event
-        CardEvents.instance.TriggerOnUseEffect(this);
+        CardEvents.instance.TriggerOnTickLife(this);
+    }
 
+    public void ResetUsetime()
+    {
+        // Reset counter
+        useCounter = usetime;
+
+        // Trigger event
+        CardEvents.instance.TriggerOnTickUse(this);
+    }
+
+    public bool CostSatified()
+    {
+        // Check if the card's costs have been satisfied
+        return cardType == CardType.Event || cost.IsSatisfied(this, inputStack);
+    }
+
+    public virtual void Trigger()
+    {
+        // Destroy all tokens in the input stack
+        inputStack.DestroyStack();
+
+        // Yield card rewards
+        reward.Generate(this, outputStack);
+
+        // Reset use timers
+        ResetUsetime();
+
+        // Reduce num uses
+        DecrementUses();
+
+        // Debug
+        Debug.Log(this.ToString() + " Triggered!");
+
+        // Trigger event
+        CardEvents.instance.TriggerOnTrigger(this);
+    }
+
+    private void DecrementUses()
+    {
         // Check if you have any uses left
         if (numUses > 0)
         {
@@ -147,22 +190,14 @@ public class Card : ScriptableObject
 
             if (numUses == 0)
             {
-                // Destroy this
+                // Destroy this card
                 Destroy();
             }
         }
     }
 
-    public void Destroy()
-    {
-        // TODO
-
-        // Trigger event
-        CardEvents.instance.TriggerOnDestroy(this);
-    }
-
     public override string ToString()
     {
-        return name + " [" + cardType.ToString() + "] Card";
+        return "'" + name + "'" + " [" + cardType.ToString() + " Card]";
     }
 }

@@ -2,21 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TokenType { Food, Faith, Gold, Manpower };
+public enum TokenType { Fealty, Population, Food, Faith, Gold, Manpower };
 
 [CreateAssetMenu]
 public class ResourceToken : ScriptableObject
 {
-    public new string name;
+    [Header("Basic")]
     public TokenType tokenType;
-    public TokenStack stack;
-    public Sprite sprite;
-    public Color color;
 
-    public void Initialize(TokenType tokenType, TokenStack stack)
+    [Header("Parent")]
+    public TokenStack stack;
+
+    public void Create(TokenStack stack)
     {
-        this.tokenType = tokenType;
         this.stack = stack;
+
+        // Add this token to stack
+        stack.PushToken(this);
+
+        // Debug
+        Debug.Log("Created: " + this.ToString());
+
+        // Trigger event
+        TokenEvents.instance.TriggerOnCreate(this, stack);
     }
 
     public void SelectToken()
@@ -68,12 +76,20 @@ public class ResourceToken : ScriptableObject
     {
         this.stack = null;
 
+        // Debug
+        Debug.Log("Destroyed: " + this.ToString());
+
         // Trigger event
         TokenEvents.instance.TriggerOnDestroy(this);
     }
 
     public override string ToString()
     {
-        return tokenType.ToString() + " [" + this.GetInstanceID() + "]";
+        return tokenType.ToString() + " Token " + " [" + this.GetInstanceID() + "]";
     }
+
+    public string BasicString()
+    {
+        return tokenType.ToString() + " Token";
+    } 
 }

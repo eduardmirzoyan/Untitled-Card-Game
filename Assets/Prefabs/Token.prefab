@@ -184,6 +184,20 @@ MonoBehaviour:
   hitbox: {fileID: 19566317043423201}
   spriteRenderer: {fileID: 8414347385414807695}
   token: {fileID: 0}
+  tokenSprites:
+  - {fileID: 21300000, guid: b0d52d8a9705e9f4783af11271e05b77, type: 3}
+  - {fileID: 21300000, guid: 2fd50797375d9574fb1ca8ed79c8d8d2, type: 3}
+  - {fileID: 21300000, guid: a524a27299776de40a4a4b1846c72490, type: 3}
+  - {fileID: 21300000, guid: d45a13e9b4c574940a98c3f8057ccfc3, type: 3}
+  - {fileID: 21300000, guid: cf3105ef3ee654b43a2897861e623448, type: 3}
+  - {fileID: 21300000, guid: a3e64a14342a94847ba0aeb6864d9233, type: 3}
+  tokenColors:
+  - {r: 0, g: 0.19432807, b: 1, a: 1}
+  - {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
+  - {r: 0.20683299, g: 0.754717, b: 0.06051977, a: 1}
+  - {r: 0, g: 0.54319143, b: 0.764151, a: 1}
+  - {r: 0.93143594, g: 0.9433962, b: 0, a: 1}
+  - {r: 0.7735849, g: 0.025542913, b: 0.025542913, a: 1}
   pickUpHeight: 0.5
   layerMask:
     serializedVersion: 2

@@ -95,7 +95,6 @@ public class BoardHandler : MonoBehaviour
         // Set position
         sideBoardTransform.position = new Vector3(0, 0, storageSize.z / 2 + tableSize.z / 2);
 
-
         // Position stacks
         float segment = sideBoardTransform.localScale.x / (board.numStacks + 1);
         Vector3 offset = new Vector3(sideBoardTransform.localScale.x / 2, 0, 0);

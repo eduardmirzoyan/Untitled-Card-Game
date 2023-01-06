@@ -18,7 +18,7 @@ public class CardEvents : MonoBehaviour
         instance = this;
     }
 
-    public event Action<Card> onCreate;
+    public event Action<Card, CardSlot> onCreate;
     public event Action<Card, bool> onDrag;
     public event Action<CardSlot, bool> onDrop;
     public event Action<Card, CardSlot, CardSlot> onMove;
@@ -26,13 +26,19 @@ public class CardEvents : MonoBehaviour
 
     public event Action<Card> onTickLife;
     public event Action<Card> onTickUse;
-    public event Action<Card> onUseEffect;
+    public event Action<Card> onTrigger;
 
-    public void TriggerOnCreate(Card card)
+    public event Action<Card> onHover;
+    public event Action<Card> onBlur;
+
+    public event Action<Card> onInspect;
+    public event Action<Card> onUninspect;
+
+    public void TriggerOnCreate(Card card, CardSlot cardSlot)
     {
         if (onCreate != null)
         {
-            onCreate(card);
+            onCreate(card, cardSlot);
         }
     }
 
@@ -84,11 +90,44 @@ public class CardEvents : MonoBehaviour
         }
     }
 
-    public void TriggerOnUseEffect(Card card)
+    public void TriggerOnTrigger(Card card)
     {
-        if (onUseEffect != null)
+        if (onTrigger != null)
         {
-            onUseEffect(card);
+            onTrigger(card);
         }
     }
+
+    public void TriggerOnInspect(Card card)
+    {
+        if (onInspect != null)
+        {
+            onInspect(card);
+        }
+    }
+
+    public void TriggerOnUninspect(Card card)
+    {
+        if (onUninspect != null)
+        {
+            onUninspect(card);
+        }
+    }
+
+    public void TriggerOnHover(Card card)
+    {
+        if (onHover != null)
+        {
+            onHover(card);
+        }
+    }
+
+    public void TriggerOnBlur(Card card)
+    {
+        if (onBlur != null)
+        {
+            onBlur(card);
+        }
+    }
+
 }

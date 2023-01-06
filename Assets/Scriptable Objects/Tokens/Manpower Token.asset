@@ -12,8 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acf0b0c2da4a86c45a46e4798e46078f, type: 3}
   m_Name: Manpower Token
   m_EditorClassIdentifier: 
-  name: 
-  tokenType: 2
+  tokenType: 5
   stack: {fileID: 0}
-  sprite: {fileID: 21300000, guid: a3e64a14342a94847ba0aeb6864d9233, type: 3}
-  color: {r: 0.8773585, g: 0.1771365, b: 0, a: 1}

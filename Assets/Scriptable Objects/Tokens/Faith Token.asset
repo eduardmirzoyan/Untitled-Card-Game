@@ -12,8 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acf0b0c2da4a86c45a46e4798e46078f, type: 3}
   m_Name: Faith Token
   m_EditorClassIdentifier: 
-  name: 
-  tokenType: 1
+  tokenType: 3
   stack: {fileID: 0}
-  sprite: {fileID: 21300000, guid: d45a13e9b4c574940a98c3f8057ccfc3, type: 3}
-  color: {r: 0.0037379938, g: 0.6296031, b: 0.7924528, a: 1}

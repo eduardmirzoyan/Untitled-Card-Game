@@ -36,7 +36,8 @@ public class GameHandler : MonoBehaviour
         StartCoroutine(StartGame());
     }
 
-    private void Update() {
+    private void Update()
+    {
         if (debugMode)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -50,7 +51,7 @@ public class GameHandler : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.M))
             {
                 // Get a copy of a random token
-                var randomToken = Instantiate(debugTokens[Random.Range(0, debugTokens.Count)]);
+                var randomToken = game.tokenTable.GetRandomToken(); // Instantiate(debugTokens[Random.Range(0, debugTokens.Count)]);
 
                 // Set name
                 randomToken.name = randomToken.ToString();

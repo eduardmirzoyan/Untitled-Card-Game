@@ -75,6 +75,7 @@ public class CardHandler : MonoBehaviour
         // If paused, then don't tick
         if (GameHandler.instance.isPaused) return;
 
+        // If a card exits and is satified, start to tick it down
         if (card != null)
         {
             // Tick timer every frame
@@ -136,6 +137,9 @@ public class CardHandler : MonoBehaviour
 
             // Inspect this card
             CardInspector.instance.Inspect(this);
+
+            // Trigger event
+            CardEvents.instance.TriggerOnInspect(card);
         }
     }
 

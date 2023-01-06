@@ -16,6 +16,8 @@ public class TokenHandler : MonoBehaviour
 
     [Header("Data")]
     [SerializeField] private ResourceToken token;
+    [SerializeField] private Sprite[] tokenSprites;
+    [SerializeField] private Color[] tokenColors;
 
     [Header("Settings")]
     [SerializeField] private float pickUpHeight = 0.5f;
@@ -49,14 +51,14 @@ public class TokenHandler : MonoBehaviour
         this.token = token;
         this.stackHandler = stackHandler;
 
-        // Set Icon
-        spriteRenderer.sprite = token.sprite;
+        // Set Icon based on type
+        spriteRenderer.sprite = tokenSprites[(int)token.tokenType];
 
-        // Set color
+        // Set Color based on type
         if (randomColor)
             meshRenderer.material.color = UnityEngine.Random.ColorHSV();
         else
-            meshRenderer.material.color = token.color;
+            meshRenderer.material.color = tokenColors[(int) token.tokenType];
 
         // Disable outline
         DisableOutline();

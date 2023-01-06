@@ -9,6 +9,7 @@ public class Board : ScriptableObject
     public int height;
 
     public CardSlot[,] cardSlots;
+    public Vector2Int cardSpawnPosition;
 
     public TokenStack[] resourceStacks;
     public int numStacks;
@@ -31,20 +32,20 @@ public class Board : ScriptableObject
 
                 // Assign it
                 cardSlots[i, j] = cardSlot;
-
-                // Debug
-                Debug.Log("Creating slot: " + cardSlot.ToString());
             }
         }
-
-        // Debug
-        Debug.Log("Created new board w/ size: " + cardSlots.GetLength(0) + " x " + cardSlots.GetLength(1));
 
         // Create side board
         InitializeSide();
 
+        // Init start location for cards
+        cardSpawnPosition = new Vector2Int(width / 2, height / 2);
+
+        // Debug
+        Debug.Log("Created Board: " + cardSlots.GetLength(0) + " x " + cardSlots.GetLength(1));
+
         // Trigger event
-        BoardEvents.instance.TriggerOnInitalize(this);
+        BoardEvents.instance.TriggerOnInitialize(this);
     }
 
     private void InitializeSide()
@@ -68,50 +69,29 @@ public class Board : ScriptableObject
 
     public void CreateCard(Card card)
     {
-        // Find the first open position
-        foreach (var cardslot in cardSlots)
-        {
-            // Check to see if slot is empty
-            if (!cardslot.IsOccupied())
-            {
-                // Create the card here
-                CreateCard(card, cardslot.position);
-                
-                // Finish
-                break;
-            }
-        }
-
-        // Else the board is full and a card cannot be made
-        Debug.Log("Board is full, card cannot be created.");
+        // Create card starting from the card start position
+        CreateCard(card, cardSpawnPosition);
     }
 
     public void CreateCard(Card card, Vector2Int position)
     {
-        // Get card slot
-        var cardSlot = cardSlots[position.x, position.y];
+        var cardSlot = GetFirstOpenCardslotFrom(position);
 
-        // Make sure transfer is possible
-        if (cardSlot.IsOccupied())
+        if (cardSlot != null)
+        {
+            // Make a copy
+            var copy = Instantiate(card);
+
+            // Create card at this slot
+            copy.Create(cardSlot);
+        }
+        else 
         {
             // Debug
-            Debug.Log("Position " + position + " already has a card.");
-
-            // Finish
-            return;
+            Debug.Log("No open card slots exist.");
         }
 
-        // Debug
-        Debug.Log("Creating card at " + cardSlot.ToString());
-
-        // Give the card to the cardslot
-        cardSlot.SetCard(card);
-
-        // Initalize the card
-        card.Initialize(cardSlot);
-
-        // Trigger event
-        BoardEvents.instance.TriggerOnCreateCard(card, position);
+        
     }
 
     public void CreateToken(ResourceToken token)
@@ -123,7 +103,7 @@ public class Board : ScriptableObject
             {
                 // Create token on that stack
                 CreateToken(token, stack);
-                // Stop
+                // Stop searching
                 break;
             }
         }
@@ -131,15 +111,49 @@ public class Board : ScriptableObject
 
     public void CreateToken(ResourceToken token, TokenStack stack)
     {
-        // Debug
-        Debug.Log("Creating token: " + token.name);
+        // Make a copy
+        var copy = Instantiate(token);
+        // Create the token
+        copy.Create(stack);
+    }
 
-        // Add token to stack
-        token.MoveTo(stack);
+    private CardSlot GetFirstOpenCardslotFrom(Vector2Int position)
+    {
+        // Get card slot at that position
+        var cardSlot = cardSlots[position.x, position.y];
 
-        // Trigger event
-        TokenEvents.instance.TriggerOnCreate(token, stack);
+        Vector2Int origin = position;
 
+        // Loop until a free slot is found
+        while (cardSlot.IsOccupied())
+        {
+            // Shift position to the left
+            position.x += 1;
+
+            // Check bounds
+            if (position.x >= width)
+            {
+                // Reset x
+                position.x = 0;
+
+                // Shift down by 1
+                position.y -= 1;
+            }
+
+            if (position.y < 0)
+            {
+                // Reset y
+                position.y = height - 1;
+            }
+
+            // Check if we've looped back
+            if (position == origin) return null;
+
+            // Update cardslot
+            cardSlot = cardSlots[position.x, position.y];
+        }
+
+        return cardSlot;
     }
 
     public string ToStringVerbose()

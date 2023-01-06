@@ -19,14 +19,16 @@ public class CardSlotHandler : MonoBehaviour
     private void Start()
     {
         // Sub to events
-        BoardEvents.instance.onCreateCard += CreateCard;
+        // BoardEvents.instance.onCreateCard += CreateCard;
+        CardEvents.instance.onCreate += CreateCard;
         CardEvents.instance.onDrop += ToggleHighlight;
     }
 
     private void OnDestroy()
     {
         // Unsub
-        BoardEvents.instance.onCreateCard -= CreateCard;
+        // BoardEvents.instance.onCreateCard -= CreateCard;
+        CardEvents.instance.onCreate -= CreateCard;
         CardEvents.instance.onDrop -= ToggleHighlight;
     }
 
@@ -39,9 +41,10 @@ public class CardSlotHandler : MonoBehaviour
         name = this.ToString();
     }
 
-    private void CreateCard(Card card, Vector2Int position)
+    private void CreateCard(Card card, CardSlot cardSlot)
     {
-        if (cardSlot.position != position) return;
+        // Make sure it's this slot
+        if (this.cardSlot != cardSlot) return;
 
         // Create the card object
         var cardHandler = Instantiate(cardPrefab).GetComponent<CardHandler>();
