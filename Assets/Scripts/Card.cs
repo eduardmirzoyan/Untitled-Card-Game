@@ -33,6 +33,7 @@ public class Card : ScriptableObject
     [Header("Runtime")]
     public float lifeCounter;
     public float useCounter;
+    public bool setToDestroy;
 
     public void Create(CardSlot cardSlot)
     {
@@ -49,6 +50,7 @@ public class Card : ScriptableObject
         // Initialize timers
         lifeCounter = lifetime;
         useCounter = usetime;
+        setToDestroy = false;
 
         // Debug
         Debug.Log("Created: " + this.ToString());
@@ -83,20 +85,39 @@ public class Card : ScriptableObject
         return true;
     }
 
-    public void Destroy()
+    public void SetReadyToDestroy()
     {
-        // Remove from stack
-        cardSlot.card = null;
-
-        // Set cardslot to null
-        cardSlot = null;
+        // Set flag
+        setToDestroy = true;
 
         // Trigger event
-        CardEvents.instance.TriggerOnDestroy(this);
+        CardEvents.instance.TriggerOnSetToDestroy(this);
+    }
+
+    public void AttemptToDestroy()
+    {
+        // See if card can be destroyed
+        if (setToDestroy && inputStack.IsEmpty() && outputStack.IsEmpty())
+        {
+            // Debug
+            Debug.Log("Destroyed: " + this.ToString());
+
+            // Remove from stack
+            cardSlot.card = null;
+
+            // Set cardslot to null
+            cardSlot = null;
+
+            // Trigger event
+            CardEvents.instance.TriggerOnDestroy(this);
+        }
     }
 
     public void TickTimers()
     {
+        // Don't do anything if card should be destroyed
+        if (setToDestroy) return;
+
         // Check if cost is satified
         if (CostSatified())
         {
@@ -130,7 +151,10 @@ public class Card : ScriptableObject
             if (lifeCounter <= 0)
             {
                 // Destroy this object
-                Destroy();
+                SetReadyToDestroy();
+                
+                // Destroy();
+
             }
         }
     }
@@ -191,9 +215,29 @@ public class Card : ScriptableObject
             if (numUses == 0)
             {
                 // Destroy this card
-                Destroy();
+                SetReadyToDestroy();
+
+                // Destroy();
             }
         }
+    }
+
+    public string GetUses()
+    {
+        // Return infinity char or value
+        return numUses == -1 ? "\u221E" : "" + numUses;
+    }
+
+    public string GetLifetime()
+    {
+        // Return infinity char or value
+        return lifetime == -1 ? "\u221E" : "" + lifeCounter;
+    }
+
+    public string GetUsetime()
+    {
+        // Return infinity char or value
+        return usetime == -1 ? "\u221E" : "" + usetime;
     }
 
     public override string ToString()

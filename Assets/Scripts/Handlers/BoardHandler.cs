@@ -9,8 +9,11 @@ public class BoardHandler : MonoBehaviour
     [SerializeField] private Transform boardTransform;
     [SerializeField] private Transform sideBoardTransform;
     [SerializeField] private Transform cardSlotsTransform;
+    [SerializeField] private Transform stacksTransform;
+
+    [Header("Prefabs")]
     [SerializeField] private GameObject cardSlotPrefab;
-    [SerializeField] private StackHandler[] stackHandlers;
+    [SerializeField] private GameObject stackPrefab;
 
     [Header("Settings")]
     [SerializeField] private float tableThickness = 0.25f;
@@ -101,12 +104,18 @@ public class BoardHandler : MonoBehaviour
 
         for (int i = 0; i < board.numStacks; i++)
         {
+            // Create stack object
+            var stackHandler = Instantiate(stackPrefab, stacksTransform).GetComponent<StackHandler>();
+
             // Calculate position
             Vector3 position = new Vector3((i + 1) * segment, sideBoardTransform.position.y, sideBoardTransform.position.z) - offset;
-            stackHandlers[i].transform.position = position;
+            stackHandler.transform.position = position;
+
+            // Get color based on token type
+            var color = GameHandler.instance.GetTokeColor((TokenType) i);
 
             // Initialize stacks
-            stackHandlers[i].Initialize(board.resourceStacks[i]);
+            stackHandler.Initialize(board.resourceStacks[i], color);
 
             // Create stack
             //var stack = Instantiate(stackPrefab, position, Quaternion.identity, transform);
@@ -141,6 +150,8 @@ public class BoardHandler : MonoBehaviour
     public StackHandler GetStackHandler()
     {
         // Fix this
-        return stackHandlers[0];
+        // return stackHandlers[0];
+
+        return null;
     }
 }

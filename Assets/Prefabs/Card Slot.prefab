@@ -77,7 +77,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c12ddbb4068da4a4aa62ffe67a50df11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardPrefab: {fileID: 6079343220894738084, guid: 24a4f07e12958ad4883e113477336e2e, type: 3}
+  cardPrefab: {fileID: 5667695981027354494, guid: c98e673e2427bcf40a35ea4eadf1076a, type: 3}
   cardDropTransform: {fileID: 4611846334027696483}
   meshRenderer: {fileID: 7363593364798976114}
   cardSlot: {fileID: 0}

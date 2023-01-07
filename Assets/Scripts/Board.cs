@@ -15,8 +15,11 @@ public class Board : ScriptableObject
     public int numStacks;
     public int stackCap = 10;
 
-    public void Initialize(int width, int height)
+    public Game game;
+
+    public void Initialize(int width, int height, Game game)
     {
+        this.game = game;
         this.width = width;
         this.height = height;
         cardSlots = new CardSlot[width, height];
@@ -62,6 +65,8 @@ public class Board : ScriptableObject
             resourceStacks[i] = ScriptableObject.CreateInstance<TokenStack>();
             // Initialize
             resourceStacks[i].Initialize(stackCap);
+            // Add restriction
+            resourceStacks[i].AddWhiteList((TokenType) i);
         }
 
         this.numStacks = numStacks;
@@ -90,8 +95,6 @@ public class Board : ScriptableObject
             // Debug
             Debug.Log("No open card slots exist.");
         }
-
-        
     }
 
     public void CreateToken(ResourceToken token)
@@ -99,7 +102,8 @@ public class Board : ScriptableObject
         // Loop through stockpile
         foreach (var stack in resourceStacks)
         {
-            if (!stack.IsFull())
+            // Check if token can be added
+            if (stack.CanAddToken(token))
             {
                 // Create token on that stack
                 CreateToken(token, stack);

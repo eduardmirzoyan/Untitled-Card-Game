@@ -16,7 +16,9 @@ public class TokenTable : ScriptableObject
         // Loop through each token type
         foreach (TokenType tokenType in tokenTypes)
         {
+            // Convert type into index
             int typeIndex = (int) tokenType;
+            
             // Create token
             tokens[typeIndex] = ScriptableObject.CreateInstance<ResourceToken>();
             tokens[typeIndex].tokenType = tokenType;
@@ -29,5 +31,14 @@ public class TokenTable : ScriptableObject
     public ResourceToken GetRandomToken()
     {
         return tokens[Random.Range(0, tokens.Length)];
+    }
+
+    public ResourceToken GetToken(TokenType tokenType)
+    {
+        // Convert type into index
+        int typeIndex = (int)tokenType;
+
+        // Get token
+        return tokens[typeIndex];
     }
 }

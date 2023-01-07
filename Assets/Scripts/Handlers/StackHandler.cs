@@ -8,6 +8,7 @@ public class StackHandler : MonoBehaviour
     [SerializeField] private GameObject tokenPrefab;
     [SerializeField] private Transform tokenDropPosition;
     [SerializeField] private MeshRenderer meshRenderer;
+    [SerializeField] private MeshRenderer outlineMesh;
 
     [Header("Data")]
     [SerializeField] private TokenStack stack;
@@ -35,7 +36,17 @@ public class StackHandler : MonoBehaviour
     {
         this.stack = stack;
 
-        // TODO?
+        // Change name
+        name = this.ToString();
+    }
+
+    public void Initialize(TokenStack stack, Color color)
+    {
+        // Init
+        Initialize(stack);
+
+        // Set outline color
+        outlineMesh.material.color = color;
     }
 
     public Vector3 GetTokenPosition()
@@ -53,6 +64,7 @@ public class StackHandler : MonoBehaviour
 
         // Create the token object
         var tokenHandler = Instantiate(tokenPrefab).GetComponent<TokenHandler>();
+        
         // Initialize it
         tokenHandler.Initialize(token, this);
     }
@@ -77,6 +89,11 @@ public class StackHandler : MonoBehaviour
     public TokenStack GetTokenStack()
     {
         return stack;
+    }
+
+    public override string ToString()
+    {
+        return stack.ToString() + " Object";
     }
 
     private void OnDrawGizmosSelected()

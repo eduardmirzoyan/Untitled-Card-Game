@@ -13,9 +13,11 @@ public class CardHandler : MonoBehaviour
     [SerializeField] private cakeslice.Outline outline;
     [SerializeField] private Rigidbody body;
     [SerializeField] private Collider hitbox;
-    [SerializeField] private TextMeshPro topText;
-    [SerializeField] private TextMeshPro middleText;
-    [SerializeField] private TextMeshPro bottomText;
+    [SerializeField] private TextMeshPro nameText;
+    [SerializeField] private TextMeshPro inputText;
+    [SerializeField] private TextMeshPro outputText;
+    [SerializeField] private TextMeshPro lifetimeText;
+    [SerializeField] private TextMeshPro usetimeText;
     [SerializeField] private Canvas canvas;
     [SerializeField] private TimersUI timersUI;
 
@@ -36,12 +38,16 @@ public class CardHandler : MonoBehaviour
     private void Start()
     {
         // Sub
+        CardEvents.instance.onHover += EnableOutline;
+        CardEvents.instance.onBlur += DisableOutline;
         CardEvents.instance.onDestroy += DestroyCard;
     }
 
     private void OnDestroy()
     {
         // Unsub
+        CardEvents.instance.onHover -= EnableOutline;
+        CardEvents.instance.onBlur -= DisableOutline;
         CardEvents.instance.onDestroy -= DestroyCard;
     }
 
@@ -51,10 +57,15 @@ public class CardHandler : MonoBehaviour
         transform.position = homeTransform.position;
 
         // Initialize visuals
-        middleText.text = card.name;
+        nameText.text = card.name;
+        lifetimeText.text = card.GetLifetime();
+        usetimeText.text = card.GetUsetime();
+        
+        // Init input/output
+        // TODO
 
         // Disable outline
-        DisableOutline();
+        // DisableOutline();
 
         // Set home
         Relocate(homeTransform);
@@ -80,6 +91,9 @@ public class CardHandler : MonoBehaviour
         {
             // Tick timer every frame
             card.TickTimers();
+
+            // Check to see if card should be destroyed
+            card.AttemptToDestroy();
         }
     }
 
@@ -87,20 +101,16 @@ public class CardHandler : MonoBehaviour
     {
         if (!isInteractable) return;
 
-        EnableOutline();
-
         // Trigger event
-        CardEvents.instance.TriggerOnDrag(card, true);
+        CardEvents.instance.TriggerOnHover(card);
     }
 
     private void OnMouseExit()
     {
         if (!isInteractable) return;
 
-        DisableOutline();
-
         // Trigger event
-        CardEvents.instance.TriggerOnDrag(card, false);
+        CardEvents.instance.TriggerOnBlur(card);
     }
 
     private void OnMouseDrag()
@@ -267,19 +277,23 @@ public class CardHandler : MonoBehaviour
         canvas.enabled = state;
     }
 
-    private void EnableOutline()
+    private void EnableOutline(Card card)
     {
+        if (this.card != card) return;
+
         outline.eraseRenderer = false;
     }
 
-    private void DisableOutline()
+    private void DisableOutline(Card card)
     {
+        if (this.card != card) return;
+
         outline.eraseRenderer = true;
     }
 
     public override string ToString()
     {
-        return card.name + " Object";
+        return card.ToString() + " Object";
     }
 
     private void OnDrawGizmosSelected()

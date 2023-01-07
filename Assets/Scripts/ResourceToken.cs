@@ -27,27 +27,6 @@ public class ResourceToken : ScriptableObject
         TokenEvents.instance.TriggerOnCreate(this, stack);
     }
 
-    public void SelectToken()
-    {
-        // Get list of tokens starting from this
-        var selectedTokens = stack.GetTokensUntilTop(this);
-        foreach (var token in selectedTokens)
-        {
-            // Trigger event
-            TokenEvents.instance.TriggerOnHover(token);
-        }
-    }
-
-    public void DeselectToken()
-    {
-        // Deselect all tokens in stack
-        foreach (var token in stack.tokens)
-        {
-            // Trigger event
-            TokenEvents.instance.TriggerOnBlur(token);
-        }
-    }
-
     public bool MoveTo(TokenStack newStack)
     {
         var oldStack = this.stack;
@@ -81,6 +60,27 @@ public class ResourceToken : ScriptableObject
 
         // Trigger event
         TokenEvents.instance.TriggerOnDestroy(this);
+    }
+
+    public void SelectToken()
+    {
+        // Get list of tokens starting from this
+        var selectedTokens = stack.GetTokensUntilTop(this);
+        foreach (var token in selectedTokens)
+        {
+            // Trigger event
+            TokenEvents.instance.TriggerOnHover(token);
+        }
+    }
+
+    public void DeselectToken()
+    {
+        // Deselect all tokens in stack
+        foreach (var token in stack.tokens)
+        {
+            // Trigger event
+            TokenEvents.instance.TriggerOnBlur(token);
+        }
     }
 
     public override string ToString()

@@ -13,12 +13,9 @@ public class TokenHandler : MonoBehaviour
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private Collider hitbox;
     [SerializeField] private SpriteRenderer spriteRenderer;
-    [SerializeField] private Transform bodyTransform;
 
     [Header("Data")]
     [SerializeField] private ResourceToken token;
-    [SerializeField] private Sprite[] tokenSprites;
-    [SerializeField] private Color[] tokenColors;
 
     [Header("Settings")]
     [SerializeField] private Vector2 tokenSize;
@@ -52,13 +49,13 @@ public class TokenHandler : MonoBehaviour
         this.stackHandler = stackHandler;
 
         // Set Icon based on type
-        spriteRenderer.sprite = tokenSprites[(int)token.tokenType];
+        spriteRenderer.sprite = GameHandler.instance.GetTokeSprite(token.tokenType);
 
         // Set Color based on type
         if (randomColor)
             meshRenderer.material.color = UnityEngine.Random.ColorHSV();
         else
-            meshRenderer.material.color = tokenColors[(int) token.tokenType];
+            meshRenderer.material.color = GameHandler.instance.GetTokeColor(token.tokenType);
 
         // Disable outline
         DisableOutline();
@@ -105,13 +102,10 @@ public class TokenHandler : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             // Debug
-            print("Right clicked on token: " + ToString());
+            print("Right clicked on: " + this.ToString());
 
-            // Return token to correct stack
-            var stackHandler = BoardHandler.instance.GetStackHandler();
-
-            // Move to stack
-            MoveToStack(stackHandler);
+            // Sort tokens into correct stacks
+            TransferHandler.instance.SortTokens();
         }
     }
 
@@ -163,6 +157,7 @@ public class TokenHandler : MonoBehaviour
     {
         // Move token to new stack
         var stack = stackHandler.GetTokenStack();
+
         // Logic here
         var moved = token.MoveTo(stack);
 
@@ -194,6 +189,11 @@ public class TokenHandler : MonoBehaviour
     {
         body.useGravity = state;
         hitbox.enabled = state;
+    }
+
+    public ResourceToken GetToken()
+    {
+        return token;
     }
 
     public override string ToString()

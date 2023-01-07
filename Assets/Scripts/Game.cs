@@ -16,6 +16,6 @@ public class Game : ScriptableObject
 
         // Create playing board
         board = ScriptableObject.CreateInstance<Board>();
-        board.Initialize(boardWidth, boardHeight);
+        board.Initialize(boardWidth, boardHeight, this);
     }
 }

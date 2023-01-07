@@ -19,7 +19,6 @@ public class CardSlotHandler : MonoBehaviour
     private void Start()
     {
         // Sub to events
-        // BoardEvents.instance.onCreateCard += CreateCard;
         CardEvents.instance.onCreate += CreateCard;
         CardEvents.instance.onDrop += ToggleHighlight;
     }
@@ -27,7 +26,6 @@ public class CardSlotHandler : MonoBehaviour
     private void OnDestroy()
     {
         // Unsub
-        // BoardEvents.instance.onCreateCard -= CreateCard;
         CardEvents.instance.onCreate -= CreateCard;
         CardEvents.instance.onDrop -= ToggleHighlight;
     }
@@ -92,7 +90,7 @@ public class CardSlotHandler : MonoBehaviour
 
     public override string ToString()
     {
-        return cardSlot.ToString();
+        return cardSlot.ToString() + " Object";
     }
 
     private void OnDrawGizmosSelected()

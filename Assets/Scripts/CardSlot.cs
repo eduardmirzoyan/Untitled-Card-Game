@@ -18,7 +18,7 @@ public class CardSlot : ScriptableObject
         this.card = null;
 
         // Debug
-        Debug.Log("Created Card Slot: " + this.ToString());
+        Debug.Log("Created: " + this.ToString());
     }
 
     public bool IsOccupied()
@@ -28,6 +28,6 @@ public class CardSlot : ScriptableObject
 
     public override string ToString()
     {
-        return "[" + position.x + ", " + position.y + "]";
+        return "Card Slot [" + position.x + ", " + position.y + "]";
     }
 }

@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class GameHandler : MonoBehaviour
 {
+    [Header("Prefabs")]
+    [SerializeField] private GameObject boardPrefab;
+    [SerializeField] private GameObject sideboardPrefab;
+
     [Header("Data")]
     [SerializeField] private Game game;
 
     [Header("Game Settings")]
     [SerializeField] private int boardWidth;
     [SerializeField] private int boardHeight;
+    [SerializeField] private List<Color> tokenColors;
+    [SerializeField] private List<Sprite> tokenSprites;
 
     [Header("Debugging")]
     [SerializeField] private bool debugMode;
@@ -75,5 +81,15 @@ public class GameHandler : MonoBehaviour
         // Start by creating a new game
         game = ScriptableObject.CreateInstance<Game>();
         game.Initialize(boardWidth, boardHeight);
+    }
+
+    public Color GetTokeColor(TokenType tokenType)
+    {
+        return tokenColors[(int)tokenType];
+    }
+
+    public Sprite GetTokeSprite(TokenType tokenType)
+    {
+        return tokenSprites[(int)tokenType];
     }
 }

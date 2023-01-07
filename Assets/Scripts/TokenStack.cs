@@ -1,20 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 [CreateAssetMenu]
 public class TokenStack : ScriptableObject
 {
     public int stackLimit = 5;
     public List<ResourceToken> tokens;
+    public SortedSet<TokenType> allowedTypes;
+    public bool isLocked;
 
     public void Initialize(int stackLimit = 5)
     {
         this.stackLimit = stackLimit;
 
-        // Initialize stack
+        // Initialize lists
         tokens = new List<ResourceToken>();
+        allowedTypes = new SortedSet<TokenType>();
+    }
+
+    public void AddWhiteList(TokenType tokenType)
+    {
+        allowedTypes.Add(tokenType);
+    }
+
+    public bool CanAddToken(ResourceToken token)
+    {
+        return !isLocked && !IsFull() && allowedTypes.Contains(token.tokenType);
     }
 
     public void PushToken(ResourceToken token)
@@ -36,6 +48,11 @@ public class TokenStack : ScriptableObject
 
         // Return removed token
         return removedToken;
+    }
+
+    public bool IsEmpty()
+    {
+        return tokens.Count == 0;
     }
 
     public bool IsFull()
@@ -78,9 +95,13 @@ public class TokenStack : ScriptableObject
         return result;
     }
 
-
     public int GetSize()
     {
         return tokens.Count;
+    }
+
+    public override string ToString()
+    {
+        return "Token Stack";
     }
 }

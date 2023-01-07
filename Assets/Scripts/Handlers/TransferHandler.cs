@@ -54,6 +54,15 @@ public class TransferHandler : MonoBehaviour
         tokenHandlers.Clear();
     }
 
+    public void SortTokens()
+    {
+        // Loop through each token
+        foreach (var tokenHandler in tokenHandlers)
+        {
+            // TODO
+        }
+    }
+
     public void PickupTokens()
     {
         // // Debug
@@ -84,36 +93,44 @@ public class TransferHandler : MonoBehaviour
         // // Debug
         // print("DROPPED!");
 
-        // Make sure a handler was found
-        if (this.stackHandler != null)
+        // Loop through each token
+        foreach (var tokenHandler in tokenHandlers)
         {
-            foreach (var tokenHandler in tokenHandlers)
-            {
-                // Enable grav
-                tokenHandler.EnablePhysics(true);
+            // Enable grav
+            tokenHandler.EnablePhysics(true);
 
-                // Move each token to stack
-                tokenHandler.MoveToStack(stackHandler);
-            }
-        }
-        else
-        {
-            // Return tokens back to their home
-            foreach (var tokenHandler in tokenHandlers)
+            // If a stack was found
+            if (this.stackHandler != null)
             {
-                // Enable grav
-                tokenHandler.EnablePhysics(true);
+                var stack = this.stackHandler.GetTokenStack();
+                var token = tokenHandler.GetToken();
 
-                // Return
-                tokenHandler.ReturnToStack();
+                // Check if stack accepts this token
+                if (stack.CanAddToken(token))
+                {
+                    // Move each token to stack
+                    tokenHandler.MoveToStack(stackHandler);
+
+                    // Move on to next token
+                    continue;
+                }
             }
+
+            // OR Return token
+            
+            // Return
+            tokenHandler.ReturnToStack();
         }
 
         // Now clear all handlers
         tokenHandlers.Clear();
 
         // Reset stack
-        stackHandler = null;
+        if (stackHandler != null) 
+        {
+            stackHandler.DisableHighlight();
+            stackHandler = null;
+        }
 
         // Set state
         isPickedUp = false;

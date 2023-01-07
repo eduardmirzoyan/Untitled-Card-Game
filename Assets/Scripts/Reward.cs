@@ -18,7 +18,7 @@ public class Reward
     public void Generate(Card card, TokenStack stack)
     {
         // Create token rewards
-        GenerateTokens(stack);
+        GenerateTokens(stack, card.cardSlot.board.game);
 
         // Create card rewards
         GenerateCards(card.cardSlot);
@@ -28,43 +28,43 @@ public class Reward
     }
 
 
-    private void GenerateTokens(TokenStack stack)
+    private void GenerateTokens(TokenStack stack, Game game)
     {
         for (int i = 0; i < foodReward; i++)
         {
-            // Get Create token
-            ResourceToken foodToken = new ResourceToken();
+            // Get token from table
+            ResourceToken foodToken = game.tokenTable.GetToken(TokenType.Food);
 
-            // Add them to stack
-            foodToken.MoveTo(stack);
+            // Create token
+            game.board.CreateToken(foodToken, stack);
         }
 
         for (int i = 0; i < faithReward; i++)
         {
-            // Get Create token
-            ResourceToken faithToken = new ResourceToken();
+            // Get token from table
+            ResourceToken faithToken = game.tokenTable.GetToken(TokenType.Faith);
 
-            // Add them to stack
-            faithToken.MoveTo(stack);
+            // Create token
+            game.board.CreateToken(faithToken, stack);
         }
 
         for (int i = 0; i < manpowerReward; i++)
         {
-            // Get Create token
-            ResourceToken mpToken = new ResourceToken();
+            // Get token from table
+            ResourceToken mpToken = game.tokenTable.GetToken(TokenType.Manpower);
 
-            // Add them to stack
-            mpToken.MoveTo(stack);
+            // Create token
+            game.board.CreateToken(mpToken, stack);
         }
 
         for (int i = 0; i < goldReward; i++)
         {
-            
-            // Get Create token
-            ResourceToken goldToken = new ResourceToken();
 
-            // Add them to stack
-            goldToken.MoveTo(stack);
+            // Get token from table
+            ResourceToken goldToken = game.tokenTable.GetToken(TokenType.Gold);
+
+            // Create token
+            game.board.CreateToken(goldToken, stack);
         }
     }
 

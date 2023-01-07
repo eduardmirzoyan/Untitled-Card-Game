@@ -26,7 +26,7 @@ MonoBehaviour:
     goldCost: 0
     cardCost: {fileID: 0}
   reward:
-    foodReward: 0
+    foodReward: 2
     faithReward: 0
     manpowerReward: 0
     goldReward: 0
@@ -39,3 +39,4 @@ MonoBehaviour:
   cardSlot: {fileID: 0}
   lifeCounter: 0
   useCounter: 0
+  readyToDestroy: 0

@@ -11,6 +11,7 @@ public class TimersUI : MonoBehaviour
     [SerializeField] private Image lifetimeTimerImage;
     [SerializeField] private Image effectTimerImage;
     [SerializeField] private TextMeshProUGUI usesText;
+    [SerializeField] private CanvasGroup destructionCanvasGroup;
 
     [Header("Data")]
     [SerializeField] private Card card;
@@ -25,33 +26,40 @@ public class TimersUI : MonoBehaviour
     private void OnDestroy()
     {
         // Unsub
-        CardEvents.instance.onTickLife -= UpdateLifeTimer;
-        CardEvents.instance.onTickUse -= UpdateUseTimer; 
-        CardEvents.instance.onTrigger -= UpdateUsesText;
+
+        // Visual events
+        CardEvents.instance.onHover -= SetTransparent;
+        CardEvents.instance.onBlur -= Show;
         CardEvents.instance.onInspect -= Hide;
         CardEvents.instance.onUninspect -= Show;
+        CardEvents.instance.onSetToDestroy -= UpdateDestroyUI;
+
+        // Card trigger events
+        CardEvents.instance.onTickLife -= UpdateLifeTimer;
+        CardEvents.instance.onTickUse -= UpdateUseTimer;
+        CardEvents.instance.onTrigger -= UpdateUsesText;
     }
 
     public void Initialize(Card card)
     {
         this.card = card;
 
-        if (card.numUses == -1)
-        {
-            // Set to inf char
-            usesText.text = "\u221E";
-        }
-        else
-        {
-            usesText.text = "" + card.numUses;
-        }
+        // Set uses
+        usesText.text = card.GetUses();
 
         // Sub
+
+        // Visual events
+        CardEvents.instance.onHover += SetTransparent;
+        CardEvents.instance.onBlur += Show;
+        CardEvents.instance.onInspect += Hide;
+        CardEvents.instance.onUninspect += Show;
+        CardEvents.instance.onSetToDestroy += UpdateDestroyUI;
+
+        // Card trigger events
         CardEvents.instance.onTickLife += UpdateLifeTimer;
         CardEvents.instance.onTickUse += UpdateUseTimer;
         CardEvents.instance.onTrigger += UpdateUsesText;
-        CardEvents.instance.onInspect += Hide;
-        CardEvents.instance.onUninspect += Show;
     }
 
     private void Update()
@@ -81,7 +89,7 @@ public class TimersUI : MonoBehaviour
         if (this.card != card) return;
 
         // Transparent UI
-        canvasGroup.alpha = 0.4f;
+        canvasGroup.alpha = 0.6f;
     }
 
     private void UpdateUsesText(Card card)
@@ -89,15 +97,7 @@ public class TimersUI : MonoBehaviour
         if (this.card != card) return;
 
         // Update text
-        if (card.numUses == -1)
-        {
-            // Set to inf char
-            usesText.text = "\u221E";
-        }
-        else
-        {
-            usesText.text = "" + card.numUses;
-        }
+        usesText.text = card.GetUses();
     }
 
     private void UpdateLifeTimer(Card card)
@@ -114,5 +114,13 @@ public class TimersUI : MonoBehaviour
 
         // Update ratio
         effectTimerImage.fillAmount = card.useCounter / card.usetime;
+    }
+
+    private void UpdateDestroyUI(Card card)
+    {
+        if (this.card != card) return;
+
+        // Show UI
+        destructionCanvasGroup.alpha = 1f;
     }
 }

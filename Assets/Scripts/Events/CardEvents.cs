@@ -19,9 +19,9 @@ public class CardEvents : MonoBehaviour
     }
 
     public event Action<Card, CardSlot> onCreate;
-    public event Action<Card, bool> onDrag;
     public event Action<CardSlot, bool> onDrop;
     public event Action<Card, CardSlot, CardSlot> onMove;
+    public event Action<Card> onSetToDestroy;
     public event Action<Card> onDestroy;
 
     public event Action<Card> onTickLife;
@@ -42,14 +42,6 @@ public class CardEvents : MonoBehaviour
         }
     }
 
-    public void TriggerOnDrag(Card card, bool state)
-    {
-        if (onDrag != null)
-        {
-            onDrag(card, state);
-        }
-    }
-
     public void TriggerOnDrop(CardSlot cardSlot, bool state)
     {
         if (onDrop != null)
@@ -63,6 +55,14 @@ public class CardEvents : MonoBehaviour
         if (onMove != null)
         {
             onMove(card, fromSlot, toSlot);
+        }
+    }
+
+    public void TriggerOnSetToDestroy(Card card)
+    {
+        if (onSetToDestroy != null)
+        {
+            onSetToDestroy(card);
         }
     }
 
